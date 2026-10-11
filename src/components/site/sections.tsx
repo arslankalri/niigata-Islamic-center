@@ -2,12 +2,13 @@ import { Link } from '@tanstack/react-router';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import { facebookUrl, type PagePath } from '@/lib/translations';
+import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, type PagePath } from '@/lib/translations';
 import day from '@/assets/mosque-day.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
 export function TextLink({to,children}: {to:PagePath;children:ReactNode}) { return <Link to={to} className="text-link">{children}<ArrowRight size={17}/></Link>; }
+export function MapsLink({href,children,secondary=false}: {href:string;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action light-action':'site-action'}><a href={href} target="_blank" rel="noopener noreferrer">{children}<ExternalLink size={16}/></a></Button>; }
 export function Eyebrow({children}: {children:ReactNode}) { return <p className="eyebrow"><span/>{children}</p>; }
 export function Pending({children}: {children:ReactNode}) { return <span className="pending-label"><span/>{children}</span>; }
 export function PrayerPreview({full=false}: {full?:boolean}) {
@@ -29,7 +30,7 @@ export function AboutSection({full=false}: {full?:boolean}) {
 }
 export function VisitSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details">{[[t.address,t.addressBody],[t.transport,t.transportBody],[t.guidance,t.guidanceBody]].map(([title,body])=><div key={title}><h3>{title}</h3><p>{body}</p></div>)}</div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p>{t.mapBody}</p><Pending>{t.confirmedPending}</Pending></div></div></section>;
+ return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapsSearchUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
