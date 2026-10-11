@@ -1,14 +1,33 @@
+import { QueryClient } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { HomePage } from "@/components/site/home";
+import { routeTree } from "@/routeTree.gen";
 import { dictionaries } from "@/lib/translations";
+
+// HomePage renders router links, so it needs a real router (and a loaded one)
+// before it can be rendered outside the app.
+async function renderHome() {
+  const router = createRouter({
+    routeTree,
+    context: { queryClient: new QueryClient() },
+    defaultPreload: "off",
+  });
+  await router.load();
+  return render(
+    <RouterProvider router={router}>
+      <HomePage />
+    </RouterProvider>,
+  );
+}
 
 // The homepage must lead with the prayer schedule and then introduce the center,
 // so the About section (with the president's photograph) sits directly below it.
 describe("Homepage About section placement", () => {
-  it("places the About section directly below the prayer-times section", () => {
-    const { container } = render(<HomePage />);
+  it("places the About section directly below the prayer-times section", async () => {
+    const { container } = await renderHome();
 
     const prayer = container.querySelector(".prayer-section");
     const about = container.querySelector(".about-section");
@@ -18,7 +37,7 @@ describe("Homepage About section placement", () => {
     expect(about).not.toBeNull();
     expect(news).not.toBeNull();
 
-    // About must follow prayer times immediately, and both must precede the
+    // About must follow prayer times immediately, and must precede the
     // announcements/events columns.
     expect(about?.previousElementSibling).toBe(prayer);
     expect(
@@ -26,8 +45,8 @@ describe("Homepage About section placement", () => {
     ).toBeTruthy();
   });
 
-  it("shows the president's photograph inside that About section", () => {
-    const { container } = render(<HomePage />);
+  it("shows the president's photograph inside that About section", async () => {
+    const { container } = await renderHome();
 
     const about = container.querySelector(".about-section");
     const photo = about?.querySelector<HTMLImageElement>(".president-card img");
