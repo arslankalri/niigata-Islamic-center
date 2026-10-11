@@ -14,15 +14,17 @@ import {
 // The location section is shared by the homepage and the Visit Us page, so the
 // rendered section is the contract for both.
 describe("Verified location and Google Maps links", () => {
-  const { container } = render(<VisitSection full />);
-
   it("shows the exact verified address", () => {
+    const { container } = render(<VisitSection full />);
+
     expect(container.textContent).toContain(mosqueAddress);
     expect(mosqueAddress).toBe("2557-1 Tarodai, Kita-ku, Niigata-shi, Niigata 950-3101, Japan");
     expect(`${mosqueAddressHead} ${mosqueAddressTail}`).toBe(mosqueAddress);
   });
 
   it("links out with the exact Google Maps URLs in a new tab", () => {
+    render(<VisitSection full />);
+
     const search = screen.getByRole("link", { name: /View on Google Maps/i });
     const directions = screen.getByRole("link", { name: /Get Directions/i });
 
