@@ -234,10 +234,9 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .news-column .text-link { font-size:10px; }
 .news-item { background:var(--card); border:1px solid var(--border); border-radius:6px; display:grid; grid-template-columns:auto minmax(0,1fr); gap:20px; padding:25px; }
 .news-icon { height:52px; width:50px; border-radius:28px 28px 3px 3px; display:grid; place-items:center; color:var(--primary); background:var(--secondary); }
-.sample-label { color:var(--gold-ink); font-size:9px; text-transform:uppercase; }
+.news-empty { border-style:dashed; }
 .news-item h3 { font-size:15px; font-weight:500; margin:9px 0; }
 .news-item p { font-size:11px; color:var(--muted-foreground); }
-.news-status { display:block; font-size:10px; color:var(--muted-foreground); margin-top:15px; }
 .about-section { padding:74px 0; border-top:1px solid var(--border); background:var(--card); }
 .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:90px; align-items:center; }
 .arch-photo { position:relative; aspect-ratio:1.12; max-width:440px; }
@@ -257,10 +256,12 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .location-panel p { color:var(--muted-foreground); font-size:11px; margin:10px 0 16px; max-width:270px; }
 .facebook-section { background:var(--forest); color:var(--on-forest); padding:45px 0; border-bottom:1px solid color-mix(in oklab,var(--gold) 20%,transparent); }
 .facebook-grid { display:grid; grid-template-columns:54px 1fr auto; gap:28px; align-items:center; }
+.facebook-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .facebook-mark { font-family:Arial,sans-serif; font-size:42px; line-height:1; text-align:center; color:var(--gold); }
 .facebook-section .eyebrow { color:var(--gold); margin-bottom:9px; }
 .facebook-section h2 { font-family:var(--font-display); font-size:30px; font-weight:500; }
 .facebook-section p:not(.eyebrow) { font-size:11px; opacity:.75; margin-top:11px; max-width:600px; }
+.facebook-cta { margin-top:24px; }
 .site-footer { background:var(--forest); color:var(--on-forest); padding-top:53px; }
 .footer-grid { display:grid; grid-template-columns:2fr 1fr 1.35fr 1fr; gap:45px; padding-bottom:45px; }
 .footer-wordmark { font-size:26px; }
@@ -294,7 +295,6 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .facebook-full .facebook-grid { grid-template-columns:70px 1fr; }
 .facebook-source { margin-top:35px; border-top:1px solid color-mix(in oklab,var(--on-forest) 20%,transparent); padding-top:25px; }
 .facebook-source h3 { font-size:16px; }
-.facebook-source .pending-label { margin-top:25px; }
 .entrance-strip img { width:100%; max-height:350px; object-fit:cover; object-position:center 45%; }
 [dir='rtl'] .text-link svg,[dir='rtl'] .site-action svg { transform:scaleX(-1); }
 [data-language='ja'] h1:not([dir='ltr']),[data-language='ja'] h2,[data-language='ja'] .display-heading { font-family:'Noto Sans JP',sans-serif; font-weight:500; line-height:1.6; }
@@ -324,7 +324,7 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
  .news-column .section-heading h2 { font-size:24px; }
  .news-item { padding:20px; gap:14px; }
  .facebook-grid { grid-template-columns:40px 1fr; gap:20px; }
- .facebook-grid > .site-action { grid-column:2; justify-self:start; margin-top:5px; }
+ .facebook-actions { grid-column:2; justify-self:start; margin-top:5px; }
  .footer-grid { gap:25px; }
  [data-language='ja'] .news-column .section-heading { flex-direction:column; gap:8px; }
 }
