@@ -2,8 +2,9 @@ import { Link } from '@tanstack/react-router';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, prayerTimesUrl, type PagePath } from '@/lib/translations';
+import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, phoneDisplay, phoneHref, prayerTimesUrl, type PagePath } from '@/lib/translations';
 import day from '@/assets/mosque-day.webp.asset.json';
+import president from '@/assets/president-rizwan.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
@@ -26,11 +27,11 @@ export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events
 }
 export function AboutSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="about-section"><div className="content-width about-grid"><div className="arch-photo"><img src={day.url} alt={t.photoDay} loading="lazy" width="960" height="960"/><span className="arch-border"/></div><div className="about-copy"><Eyebrow>{t.aboutEyebrow}</Eyebrow><h2 className="display-heading preserve-lines">{t.aboutTitle}</h2><p>{t.aboutBody}</p><div className="ornament-divider"><span/>◇<span/></div>{!full?<ActionLink to="/about">{t.more}</ActionLink>:<div className="about-details"><h3>{t.history}</h3><p>{t.historyBody}</p><h3>{t.leadership}</h3><p>{t.leadershipBody}</p></div>}</div></div></section>;
+ return <section className="about-section"><div className="content-width about-grid"><div className="arch-photo"><img src={day.url} alt={t.photoDay} loading="lazy" width="960" height="960"/><span className="arch-border"/></div><div className="about-copy"><Eyebrow>{t.aboutEyebrow}</Eyebrow><h2 className="display-heading preserve-lines">{t.aboutTitle}</h2><p>{t.aboutBody}</p><div className="ornament-divider"><span/>◇<span/></div>{!full?<><PresidentCard compact/><ActionLink to="/about">{t.more}</ActionLink></>:<div className="about-details"><h3>{t.history}</h3><p>{t.historyBody}</p><h3>{t.presidentHeading}</h3><PresidentCard/><h3>{t.leadership}</h3><p>{t.leadershipBody}</p></div>}</div></div></section>;
 }
 export function VisitSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapsSearchUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
+ return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p></div><div><h3>{t.phoneLabel}</h3><p><PhoneLink/></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapsSearchUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
@@ -43,3 +44,5 @@ export function PageIntro({index}: {index:number}) {
  return <section className="page-intro"><div className="content-width"><Eyebrow>Islamic Center Niigata</Eyebrow><h1>{t.nav[index]}</h1><p>{descriptions[index]}</p><span className="intro-ornament" aria-hidden="true">✧</span></div></section>;
 }
 export function EntrancePhoto() { const {t}=useLanguage();return <div className="entrance-strip content-width"><img src={entrance.url} alt={t.photoEntrance} loading="lazy" width="900" height="1600"/></div>; }
+export function PhoneLink() { return <a className="phone-link" href={phoneHref} dir="ltr">{phoneDisplay}</a>; }
+export function PresidentCard({compact=false}: {compact?:boolean}) { const {t}=useLanguage(); const body=<><img src={president.url} alt={t.presidentPhoto} loading="lazy" width="480" height="480"/><div>{compact&&<p className="president-kicker">{t.presidentHeading}</p>}<p className="president-name">{t.presidentName}</p><p className="president-title">{t.presidentTitle}</p></div></>; return compact?<Link to="/about" className="president-card compact">{body}</Link>:<div className="president-card">{body}</div>; }
