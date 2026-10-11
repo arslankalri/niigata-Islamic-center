@@ -7,6 +7,8 @@ import day from '@/assets/mosque-day.webp.asset.json';
 import president from '@/assets/president-rizwan.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
+import { announcements, formatDate } from '@/lib/announcements';
+import { dictionaries } from '@/lib/translations';
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
 export function TextLink({to,children}: {to:PagePath;children:ReactNode}) { return <Link to={to} className="text-link">{children}<ArrowRight size={17}/></Link>; }
 export function MapsLink({href,children,secondary=false}: {href:string;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action light-action':'site-action'}><a href={href} target="_blank" rel="noopener noreferrer">{children}<ExternalLink size={16}/></a></Button>; }
@@ -21,8 +23,8 @@ export function PrayerPreview({full=false}: {full?:boolean}) {
  </div></section>;
 }
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
- const {t}=useLanguage();
- const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div><article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article></div>;
+ const {t,language}=useLanguage();
+ const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover.url} alt={a.cover.alt} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang="ur">{dictionaries.ur.articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang="ur" dir="rtl">{a.title}</h3>{t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
  return <section className="content-width section-space news-section">{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
 }
 export function AboutSection({full=false}: {full?:boolean}) {
