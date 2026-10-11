@@ -2,7 +2,7 @@ export type Language = 'en' | 'ja' | 'ur';
 export const paths = ['/', '/prayer-times', '/about', '/announcements', '/events', '/visit', '/facebook'] as const;
 export type PagePath = typeof paths[number];
 const en = {
- nav: ['Home', 'Prayer Times', 'About the Center', 'Announcements', 'Events', 'Visit Us', 'Facebook Community'],
+ location: 'Niigata · Japan', nav: ['Home', 'Prayer Times', 'About the Center', 'Announcements', 'Events', 'Visit Us', 'Facebook Community'],
  welcome: 'A place of faith. A sense of belonging.', welcomeBody: 'Welcome to our mosque and Muslim community in Niigata, Japan.',
  eyebrow: 'FAITH · COMMUNITY · CONNECTION', aboutLink: 'Discover our center',
  prayer: 'Prayer times', prayerBody: 'A daily rhythm of faith and reflection.', pending: 'Official schedule pending', scheduleNotice: 'The verified prayer schedule will appear here once the center’s official QR code source is connected.',
@@ -16,7 +16,7 @@ const en = {
 };
 type Dictionary = { [K in keyof typeof en]: typeof en[K] };
 const ja: Dictionary = {
- nav: ['ホーム', '礼拝時間', 'センターについて', 'お知らせ', 'イベント', 'アクセス', 'Facebookコミュニティ'],
+ location: '新潟 · 日本', nav: ['ホーム', '礼拝時間', 'センターについて', 'お知らせ', 'イベント', 'アクセス', 'Facebookコミュニティ'],
  welcome: '信仰の場。つながりのある場所。', welcomeBody: '新潟のモスクとムスリムコミュニティへようこそ。', eyebrow: '信仰 · コミュニティ · つながり', aboutLink: 'センターについて知る',
  prayer: '礼拝時間', prayerBody: '信仰と心の静けさを育む日々の礼拝。', pending: '公式礼拝時間の連携待ち', scheduleNotice: 'センターの公式QRコードの参照先を確認・連携した後、正式な礼拝時間を掲載します。', prayers: ['ファジュル', 'ズフル', 'アスル', 'マグリブ', 'イシャー', 'ジュムア'], adhan: 'アザーン', iqamah: 'イカーマ', source: '公式礼拝時間の参照先', sourceBody: 'センターのQRコードと公式の参照先の確認を待っています。', notAvailable: '未掲載',
  latest: 'コミュニティから', announcements: '最新のお知らせ', allAnnouncements: 'お知らせ一覧', sample: 'サンプル・仮の内容', announcementTitle: 'センターからのお知らせ', announcementBody: 'センターによる確認後、公式のお知らせや情報を掲載します。', events: '今後のイベント', allEvents: 'イベント一覧', eventTitle: 'コミュニティの集い', eventBody: '確認済みのイベント、開催日、詳細をこちらでご案内します。', datePending: '日程は確認待ち',
@@ -26,7 +26,7 @@ const ja: Dictionary = {
  footerBody: '日本の新潟にある\n礼拝とコミュニティの場。', explore: '各ページ', connect: 'コミュニティ', languages: '言語', copyright: 'Islamic Center Niigata. 無断転載を禁じます。', skip: '本文へ移動', menu: 'メニューを開く', close: 'メニューを閉じる', photoNight: '緑のドームと入口がライトアップされた夜のIslamic Center Niigata', photoDay: '緑のドーム、白い外壁、アーチ窓のある実際のIslamic Center Niigata', photoEntrance: 'Islamic Center Niigataの入口に集まる訪問者', confirmedPending: '正式な情報は確認待ち', pageDescriptions: ['新潟のモスクとムスリムコミュニティセンター、Islamic Center Niigataへようこそ。', 'Islamic Center Niigataの公式礼拝時間。正式な参照先の連携は準備中です。', '日本の新潟にあるIslamic Center Niigataのご紹介。', 'Islamic Center Niigataの公式お知らせ。確認済みの情報は準備中です。', 'Islamic Center Niigataのイベント。日程と詳細は確認待ちです。', 'Islamic Center Niigataへのアクセス。住所、交通、訪問情報は確認待ちです。', 'Islamic Center NiigataのFacebookコミュニティ。公式参照先は確認待ちです。'],
 };
 const ur: Dictionary = {
- nav: ['صفحۂ اول', 'نماز کے اوقات', 'مرکز کے بارے میں', 'اعلانات', 'تقریبات', 'ہم سے ملیں', 'فیس بک کمیونٹی'], welcome: 'ایمان کی جگہ۔ اپنائیت کا احساس۔', welcomeBody: 'نیگاتا، جاپان میں ہماری مسجد اور مسلم کمیونٹی میں خوش آمدید۔', eyebrow: 'ایمان · برادری · تعلق', aboutLink: 'ہمارے مرکز کو جانیں',
+ location: 'نیگاتا · جاپان', nav: ['صفحۂ اول', 'نماز کے اوقات', 'مرکز کے بارے میں', 'اعلانات', 'تقریبات', 'ہم سے ملیں', 'فیس بک کمیونٹی'], welcome: 'ایمان کی جگہ۔ اپنائیت کا احساس۔', welcomeBody: 'نیگاتا، جاپان میں ہماری مسجد اور مسلم کمیونٹی میں خوش آمدید۔', eyebrow: 'ایمان · برادری · تعلق', aboutLink: 'ہمارے مرکز کو جانیں',
  prayer: 'نماز کے اوقات', prayerBody: 'ایمان اور غور و فکر کا روزانہ کا سفر۔', pending: 'سرکاری نظام الاوقات کا انتظار', scheduleNotice: 'مرکز کے سرکاری کیو آر کوڈ کے ذریعے مستند ماخذ منسلک ہونے کے بعد نماز کے تصدیق شدہ اوقات یہاں دکھائے جائیں گے۔', prayers: ['فجر', 'ظہر', 'عصر', 'مغرب', 'عشاء', 'جمعہ'], adhan: 'اذان', iqamah: 'اقامت', source: 'سرکاری نظام الاوقات کا ماخذ', sourceBody: 'مرکز کے کیو آر کوڈ اور تصدیق شدہ ماخذ کا انتظار ہے۔', notAvailable: 'ابھی دستیاب نہیں',
  latest: 'ہماری کمیونٹی سے', announcements: 'تازہ اعلانات', allAnnouncements: 'تمام اعلانات', sample: 'نمونہ — عارضی مواد', announcementTitle: 'مرکز کی خبریں', announcementBody: 'مرکز کی تصدیق کے بعد سرکاری خبریں اور اعلانات یہاں شائع کیے جائیں گے۔', events: 'آنے والی تقریبات', allEvents: 'تمام تقریبات', eventTitle: 'کمیونٹی کی محفلیں', eventBody: 'تصدیق شدہ تقریبات، تاریخیں اور تفصیلات یہاں فراہم کی جائیں گی۔', datePending: 'تاریخ کی تصدیق کا انتظار',
  aboutEyebrow: 'ہمارا مرکز', aboutTitle: 'ایمان سے وابستہ۔\nکمیونٹی سے جڑے ہوئے۔', aboutBody: 'Islamic Center Niigata جاپان کے شہر نیگاتا میں ایک مسجد اور مسلم کمیونٹی مرکز ہے۔ نماز، باہمی تعلق اور پرتپاک استقبال کی جگہ۔', more: 'مرکز کے بارے میں', history: 'ہماری کہانی', historyBody: 'مرکز کی تصدیق شدہ تاریخ اور معلومات یہاں شامل کی جائیں گی۔', leadership: 'ہماری کمیونٹی', leadershipBody: 'مرکز کی قیادت اور کمیونٹی سرگرمیوں کی معلومات تصدیق کی منتظر ہیں۔',
