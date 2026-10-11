@@ -21,6 +21,9 @@
 # Homepage About placement
 - [x] Move the About section directly below the prayer-times section, with the president's photograph shown in that card.
 
+# Announcements
+- [x] Publish Urdu article on the Japanese volunteer teachers' visit (cover + gallery, Urdu-only note in EN/JA).
+
 # Still pending
 - [ ] Transport/parking details and visiting hours (awaiting confirmation).
 - [ ] Center history and wider community/leadership information (awaiting confirmation).
