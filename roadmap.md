@@ -8,3 +8,8 @@
 - [x] Replace sample announcement/event placeholders with translated empty states (EN/JA/UR).
 - [x] Link the official Facebook community group (opens in a new tab) from the homepage and Facebook page.
 - [x] Keep prayer times, address, and map marked as pending; re-verify languages, RTL, and responsiveness.
+
+# Location and directions
+- [x] Show the verified address (2557-1 Tarodai, Kita-ku, Niigata-shi, Niigata 950-3101, Japan) on the homepage location section and the Visit Us page.
+- [x] Add translated "View on Google Maps" and "Get Directions" links (EN/JA/UR) opening the supplied URLs in a new tab.
+- [x] Keep prayer times, transport, and visiting-hours information marked as pending; re-verify languages, RTL, and responsiveness.
