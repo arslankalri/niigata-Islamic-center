@@ -222,7 +222,11 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .prayer-symbol { display:block; font-size:22px; color:var(--gold-ink); height:32px; line-height:1; }
 .prayer-item h3 { font-weight:500; font-size:12px; color:var(--primary); margin-top:5px; }
 .prayer-time { display:block; font-family:var(--font-display); font-size:27px; color:var(--forest); margin-top:7px; line-height:1.2; }
-.schedule-note { display:flex; gap:8px; align-items:center; border-top:1px solid var(--border); padding-top:15px; margin-top:22px; color:var(--muted-foreground); font-size:10px; }
+.prayer-embed { margin-top:26px; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--card); }
+.prayer-embed iframe { display:block; width:100%; height:520px; border:0; }
+.prayer-embed.full-embed iframe { height:720px; min-height:60vh; }
+@media (max-width:640px) { .prayer-embed iframe { height:560px; } .prayer-embed.full-embed iframe { height:640px; } }
+.schedule-note { display:flex; gap:8px; align-items:center; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:15px; margin-top:22px; color:var(--muted-foreground); font-size:10px; }
 .schedule-note > svg { flex-shrink:0; }
 .schedule-note > .text-link { margin-inline-start:auto; white-space:nowrap; font-size:10px; }
 .section-space { padding-top:64px; padding-bottom:65px; }
