@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep public copy in centralized typed language dictionaries and share a language provider across all routes, so navigation preserves the selected language.
+- Build public pages from reusable presentation components with no data-service dependency, so verified integrations can be added independently later.
+- Reference uploaded photographs through Lovable Assets pointers and optimize them before upload to keep the website lightweight.
