@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import type { PagePath } from '@/lib/translations';
+import { facebookUrl, type PagePath } from '@/lib/translations';
 import day from '@/assets/mosque-day.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
@@ -20,7 +20,7 @@ export function PrayerPreview({full=false}: {full?:boolean}) {
 }
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
  const {t}=useLanguage();
- const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div><article className="news-item"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><span className="sample-label">{t.sample}</span><h3>{event?t.eventTitle:t.announcementTitle}</h3><p>{event?t.eventBody:t.announcementBody}</p><span className="news-status">{event?t.datePending:t.confirmedPending}</span></div></article></div>;
+ const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div><article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article></div>;
  return <section className="content-width section-space news-section">{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
 }
 export function AboutSection({full=false}: {full?:boolean}) {
@@ -33,7 +33,8 @@ export function VisitSection({full=false}: {full?:boolean}) {
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className={full?'facebook-section facebook-full':'facebook-section'}><div className="content-width facebook-grid"><span className="facebook-mark" aria-hidden="true">f</span><div><Eyebrow>{t.facebookEyebrow}</Eyebrow><h2>{t.facebookTitle}</h2><p>{t.facebookBody}</p>{full&&<div className="facebook-source"><h3>{t.facebookSource}</h3><p>{t.facebookSourceBody}</p><Pending>{t.facebookPending}</Pending></div>}</div>{!full&&<ActionLink to="/facebook" secondary>{t.nav[6]}</ActionLink>}</div></section>;
+ const visit=<Button asChild size="lg" className="site-action secondary-action"><a href={facebookUrl} target="_blank" rel="noopener noreferrer">{t.facebookVisit}<ExternalLink size={16}/></a></Button>;
+ return <section className={full?'facebook-section facebook-full':'facebook-section'}><div className="content-width facebook-grid"><span className="facebook-mark" aria-hidden="true">f</span><div><Eyebrow>{t.facebookEyebrow}</Eyebrow><h2>{t.facebookTitle}</h2><p>{t.facebookBody}</p>{full&&<div className="facebook-cta">{visit}</div>}{full&&<div className="facebook-source"><h3>{t.facebookSource}</h3><p>{t.facebookSourceBody}</p></div>}</div>{!full&&<div className="facebook-actions"><ActionLink to="/facebook" secondary>{t.nav[6]}</ActionLink>{visit}</div>}</div></section>;
 }
 export function PageIntro({index}: {index:number}) {
  const {t}=useLanguage();
