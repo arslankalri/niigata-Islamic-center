@@ -257,6 +257,7 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .location-panel .location-address { color:var(--forest); font-size:12px; font-weight:500; line-height:1.55; margin:9px 0 0; max-width:280px; }
 .location-panel .location-address + p { margin:8px 0 0; }
 .maps-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px; }
+.address-tail { white-space:nowrap; }
 .light-action { color:var(--forest); background:var(--card); border:1px solid color-mix(in oklab,var(--forest) 24%,transparent); }
 .light-action:hover { background:color-mix(in oklab,var(--forest) 8%,var(--card)); }
 .visit-details .visit-address { color:var(--forest); font-weight:500; }

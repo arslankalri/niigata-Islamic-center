@@ -2,6 +2,9 @@ export type Language = 'en' | 'ja' | 'ur';
 export const paths = ['/', '/prayer-times', '/about', '/announcements', '/events', '/visit', '/facebook'] as const;
 export const facebookUrl = 'https://www.facebook.com/share/g/1EdtDVywy5/?mibextid=wwXIfr';
 export const mosqueAddress = '2557-1 Tarodai, Kita-ku, Niigata-shi, Niigata 950-3101, Japan';
+// The address renders as two runs so the postal code never splits across lines.
+export const mosqueAddressTail = 'Niigata 950-3101, Japan';
+export const mosqueAddressHead = mosqueAddress.slice(0, mosqueAddress.indexOf(mosqueAddressTail) - 1);
 export const mapsSearchUrl = 'https://www.google.com/maps/search/?api=1&query=Islamic%20Center%20of%20Niigata%2C%202557-1%20Tarodai%2C%20Niigata%2C%20Japan';
 export const mapsDirectionsUrl = 'https://www.google.com/maps/dir/?api=1&destination=Islamic%20Center%20of%20Niigata%2C%202557-1%20Tarodai%2C%20Niigata%2C%20Japan';
 export type PagePath = typeof paths[number];
@@ -25,7 +28,7 @@ const ja: Dictionary = {
  prayer: '礼拝時間', prayerBody: '信仰と心の静けさを育む日々の礼拝。', pending: '公式礼拝時間の連携待ち', scheduleNotice: 'センターの公式QRコードの参照先を確認・連携した後、正式な礼拝時間を掲載します。', prayers: ['ファジュル', 'ズフル', 'アスル', 'マグリブ', 'イシャー', 'ジュムア'], adhan: 'アザーン', iqamah: 'イカーマ', source: '公式礼拝時間の参照先', sourceBody: 'センターのQRコードと公式の参照先の確認を待っています。', notAvailable: '未掲載',
  latest: 'コミュニティから', announcements: '最新のお知らせ', allAnnouncements: 'お知らせ一覧', noAnnouncements: '現在お知らせはありません', announcementBody: 'センターによる確認後、公式のお知らせや情報を掲載します。', events: '今後のイベント', allEvents: 'イベント一覧', noEvents: '現在、今後のイベントの予定はありません', eventBody: '確認済みのイベント、開催日、詳細は決まり次第こちらでご案内します。',
  aboutEyebrow: '私たちのセンター', aboutTitle: '信仰を大切に。\n地域とつながる。', aboutBody: 'Islamic Center Niigataは、日本の新潟にあるモスクとムスリムコミュニティセンターです。礼拝と交流、温かい歓迎の場です。', more: 'センターについて', history: 'センターの歩み', historyBody: '確認済みの歴史とセンターの情報を今後掲載します。', leadership: '私たちのコミュニティ', leadershipBody: '運営者やコミュニティ活動についての情報は確認待ちです。',
- visitEyebrow: 'ようこそ', visitTitle: 'Islamic Center Niigataへ', visitBody: '皆さまのお越しをお待ちしています。住所とGoogleマップのリンクは下記でご確認ください。', planVisit: 'アクセスを見る', address: '住所', map: '地図・アクセス', mapBody: 'Googleマップで場所を確認するか、現在地からのルートをお探しください。', mapsView: 'Googleマップで見る', mapsDirections: 'ルートを検索', transport: '交通案内', transportBody: '公共交通機関、駐車場、経路の情報は確認待ちです。', guidance: '訪問のご案内', guidanceBody: '正式な訪問時間と訪問時のご案内は確認待ちです。',
+ visitEyebrow: 'ようこそ', visitTitle: 'Islamic Center Niigataへ', visitBody: '皆さまのお越しをお待ちしています。住所とGoogleマップのリンクは下記でご確認ください。', planVisit: 'アクセスを見る', address: '住所', map: '地図・アクセス', mapBody: 'Googleマップで場所とルートをご確認いただけます。', mapsView: 'Googleマップで見る', mapsDirections: 'ルートを検索', transport: '交通案内', transportBody: '公共交通機関、駐車場、経路の情報は確認待ちです。', guidance: '訪問のご案内', guidanceBody: '正式な訪問時間と訪問時のご案内は確認待ちです。',
  facebookEyebrow: 'つながりを大切に', facebookTitle: 'Facebookコミュニティ', facebookBody: '公式Facebookグループで、コミュニティとのつながりを。', facebookVisit: 'Facebookコミュニティを見る', facebookSource: '公式Facebookグループ', facebookSourceBody: '公式のコミュニティグループは上のボタンからご覧いただけます。投稿がこのウェブサイトに自動同期されることはありません。',
  footerBody: '日本の新潟にある\n礼拝とコミュニティの場。', explore: '各ページ', connect: 'コミュニティ', languages: '言語', copyright: 'Islamic Center Niigata. 無断転載を禁じます。', skip: '本文へ移動', menu: 'メニューを開く', close: 'メニューを閉じる', photoNight: '緑のドームと入口がライトアップされた夜のIslamic Center Niigata', photoDay: '緑のドーム、白い外壁、アーチ窓のある実際のIslamic Center Niigata', photoEntrance: 'Islamic Center Niigataの入口に集まる訪問者', pageDescriptions: ['新潟のモスクとムスリムコミュニティセンター、Islamic Center Niigataへようこそ。', 'Islamic Center Niigataの公式礼拝時間。正式な参照先の連携は準備中です。', '日本の新潟にあるIslamic Center Niigataのご紹介。', 'Islamic Center Niigataの公式お知らせ。確認済みの情報は準備中です。', 'Islamic Center Niigataのイベント。日程と詳細は確認待ちです。', 'Islamic Center Niigataへのアクセス。住所：2557-1 Tarodai, Kita-ku, Niigata-shi, Niigata 950-3101, Japan。Googleマップで場所とルートをご確認いただけます。', '公式Facebookコミュニティグループを通じて、Islamic Center Niigataとつながりましょう。'],
 };

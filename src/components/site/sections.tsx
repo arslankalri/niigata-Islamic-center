@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddress, type PagePath } from '@/lib/translations';
+import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, type PagePath } from '@/lib/translations';
 import day from '@/assets/mosque-day.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
