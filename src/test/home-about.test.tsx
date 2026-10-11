@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { createRouter, RouterContextProvider } from "@tanstack/react-router";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
@@ -7,19 +7,19 @@ import { HomePage } from "@/components/site/home";
 import { routeTree } from "@/routeTree.gen";
 import { dictionaries } from "@/lib/translations";
 
-// HomePage renders router links, so it needs a real router (and a loaded one)
-// before it can be rendered outside the app.
+// HomePage renders router links, so it needs a loaded router in context before
+// it can be rendered outside the app.
 async function renderHome() {
   const router = createRouter({
     routeTree,
     context: { queryClient: new QueryClient() },
-    defaultPreload: "off",
+    defaultPreload: false,
   });
   await router.load();
   return render(
-    <RouterProvider router={router}>
+    <RouterContextProvider router={router}>
       <HomePage />
-    </RouterProvider>,
+    </RouterContextProvider>,
   );
 }
 
