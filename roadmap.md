@@ -13,3 +13,11 @@
 - [x] Show the verified address (2557-1 Tarodai, Kita-ku, Niigata-shi, Niigata 950-3101, Japan) on the homepage location section and the Visit Us page.
 - [x] Add translated "View on Google Maps" and "Get Directions" links (EN/JA/UR) opening the supplied URLs in a new tab.
 - [x] Keep prayer times, transport, and visiting-hours information marked as pending; re-verify languages, RTL, and responsiveness.
+
+# Prayer times
+- [x] Embed the mosque's official live schedule (mosquetimedisplay.web.app/m) on the homepage section and Prayer Times page; verified embedding is allowed.
+- [x] Add translated "View All Prayer Times" / "Open Live Prayer Times" links (EN/JA/UR) opening the source in a new tab; verified Urdu RTL and mobile layout.
+
+# Still pending
+- [ ] Transport/parking details and visiting hours (awaiting confirmation).
+- [ ] Center history and leadership information (awaiting confirmation).
