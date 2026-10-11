@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, type PagePath } from '@/lib/translations';
+import { facebookUrl, mapsDirectionsUrl, mapsSearchUrl, mosqueAddressHead, mosqueAddressTail, prayerTimesUrl, type PagePath } from '@/lib/translations';
 import day from '@/assets/mosque-day.webp.asset.json';
 import entrance from '@/assets/mosque-entrance.webp.asset.json';
 import type { ReactNode } from 'react';
@@ -14,8 +14,8 @@ export function Pending({children}: {children:ReactNode}) { return <span classNa
 export function PrayerPreview({full=false}: {full?:boolean}) {
  const { t } = useLanguage();
  return <section className={full?'prayer-section full-prayer':'prayer-section'}><div className="content-width"><div className="section-heading prayer-heading"><div><div className="heading-icon"><Clock3 size={19}/><h2>{t.prayer}</h2></div><p>{t.prayerBody}</p></div><Pending>{t.pending}</Pending></div>
- {full ? <div className="prayer-table-wrap"><table className="prayer-table"><thead><tr><th>{t.prayer}</th><th>{t.adhan}</th><th>{t.iqamah}</th></tr></thead><tbody>{t.prayers.map(p=><tr key={p}><th scope="row">{p}</th><td aria-label={t.notAvailable}>—</td><td aria-label={t.notAvailable}>—</td></tr>)}</tbody></table></div> : <div className="prayer-grid">{t.prayers.map((p,i)=><div key={p} className="prayer-item"><span className="prayer-symbol">{i===0?'◔':i===1?'☀':i===2?'◑':i===3?'◒':i===4?'☾':'◇'}</span><h3>{p}</h3><span className="prayer-time" aria-label={t.notAvailable}>— : —</span></div>)}</div>}
- <div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{!full && <TextLink to="/prayer-times">{t.nav[1]}</TextLink>}</div>
+ <div className={full?'prayer-embed full-embed':'prayer-embed'}><iframe src={prayerTimesUrl} title={t.iframeTitle} loading="lazy" referrerPolicy="no-referrer"/></div>
+ <div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{full ? <MapsLink href={prayerTimesUrl}>{t.openLive}</MapsLink> : <TextLink to="/prayer-times">{t.viewAll}</TextLink>}</div>
  {full && <div className="schedule-source"><div className="qr-placeholder"><Clock3 size={30}/></div><div><h3>{t.source}</h3><p>{t.sourceBody}</p></div></div>}
  </div></section>;
 }
