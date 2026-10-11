@@ -16,7 +16,7 @@ export const Route = createFileRoute('/announcements_/$slug')({
 
 function ArticlePage() {
   const a = Route.useLoaderData();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const ur = dictionaries.ur;
   return (
     <article className="content-width section-space article-page">
@@ -32,7 +32,6 @@ function ArticlePage() {
           {[a.cover, ...a.gallery].map(img => <img key={img.url} src={img.url} alt={img.alt} width={img.width} height={img.height} loading="lazy" />)}
         </div>
       </div>
-      <span className="sr-only">{language}</span>
     </article>
   );
 }
