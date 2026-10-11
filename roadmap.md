@@ -24,6 +24,9 @@
 # Announcements
 - [x] Publish Urdu article on the Japanese volunteer teachers' visit (cover + gallery, Urdu-only note in EN/JA).
 
+# Navigation and ticker
+- [x] Remove hero buttons, always-visible 7-link nav (scrollable on mobile), latest-announcement ticker on homepage.
+
 # Still pending
 - [ ] Transport/parking details and visiting hours (awaiting confirmation).
 - [ ] Center history and wider community/leadership information (awaiting confirmation).
