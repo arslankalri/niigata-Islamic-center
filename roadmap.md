@@ -18,6 +18,9 @@
 - [x] Embed the mosque's official live schedule (mosquetimedisplay.web.app/m) on the homepage section and Prayer Times page; verified embedding is allowed.
 - [x] Add translated "View All Prayer Times" / "Open Live Prayer Times" links (EN/JA/UR) opening the source in a new tab; verified Urdu RTL and mobile layout.
 
+# Homepage About placement
+- [x] Move the About section directly below the prayer-times section, with the president's photograph shown in that card.
+
 # Still pending
 - [ ] Transport/parking details and visiting hours (awaiting confirmation).
 - [ ] Center history and leadership information (awaiting confirmation).
