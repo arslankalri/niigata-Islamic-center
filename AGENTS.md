@@ -12,3 +12,4 @@
 - Keep public copy in centralized typed language dictionaries and share a language provider across all routes, so navigation preserves the selected language.
 - Build public pages from reusable presentation components with no data-service dependency, so verified integrations can be added independently later.
 - Reference uploaded photographs through Lovable Assets pointers and optimize them before upload to keep the website lightweight.
+- Keep public announcement lists and the homepage ticker on the same publication-date-descending collection, so newly published articles appear first everywhere.

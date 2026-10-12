@@ -23,6 +23,7 @@
 
 # Announcements
 - [x] Publish Urdu article on the Japanese volunteer teachers' visit (cover + gallery, Urdu-only note in EN/JA).
+- [x] Post the permission-approved newspaper article dated 12 October 2026 with all three images; verify article, lists, and ticker.
 
 # Navigation and ticker
 - [x] Remove hero buttons, always-visible 7-link nav (scrollable on mobile), latest-announcement ticker on homepage.
