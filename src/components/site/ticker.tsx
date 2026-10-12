@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from './language';
-import { announcements, formatDate } from '@/lib/announcements';
+import { publishedAnnouncements as announcements, formatDate, paragraphs } from '@/lib/announcements';
 
 export function AnnouncementTicker() {
   const { t, language } = useLanguage();
@@ -18,7 +18,7 @@ export function AnnouncementTicker() {
   }, [multiple, paused, items.length]);
   if (items.length === 0) return null;
   const a = items[index % items.length];
-  const excerpt = a.body[0];
+  const excerpt = paragraphs(a)[0];
   const go = (d: number) => setIndex(i => (i + d + items.length) % items.length);
   return (
     <section className="announcement-ticker" aria-label={t.tickerLabel} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
