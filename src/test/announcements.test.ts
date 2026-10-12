@@ -18,6 +18,10 @@ describe('Approved newspaper article', () => {
     expect(article?.reviewImages ?? []).toEqual([]);
   });
 
+  it('credits Malik Allah Yar Khan as the author', () => {
+    expect(findAnnouncement(slug)?.author).toBe('ملک اللہ یار خان');
+  });
+
   it('puts today’s article first in the public lists and ticker', () => {
     expect(publishedAnnouncements[0]?.slug).toBe(slug);
     expect(publishedAnnouncements[1]?.date).toBe('2026-10-10');
