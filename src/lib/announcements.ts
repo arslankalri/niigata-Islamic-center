@@ -47,9 +47,9 @@ export const announcements: Announcement[] = [
   },
   {
     slug: 'niigata-muslim-community-newspaper-coverage',
-    status: 'draft',
+    status: 'published',
     language: 'ur',
-    date: '2026-09-30',
+    date: '2026-10-12',
     category: 'کمیونٹی نیوز / میڈیا کوریج',
     title: 'نیگاتا نیپو کی تین روزہ رپورٹ سیریز: مسجد، مسلم کمیونٹی اور حلال کاروبار پر خصوصی کوریج',
     body: [
@@ -76,11 +76,9 @@ export const announcements: Announcement[] = [
       'مسجد عبادت اور باہمی تعاون کا مرکز ہے، مقامی مسلمان اپنے کاروبار اور خاندانی زندگی کے ذریعے معاشرے کا حصہ ہیں، اور حلال خوراک کی دستیابی کمیونٹی کی ایک عملی ضرورت پوری کرتی ہے۔',
       'اسی کے ساتھ، غیر مصدقہ معلومات اور مذہبی تعصب سے پیدا ہونے والے مسائل اس بات کی یاد دہانی کراتے ہیں کہ مختلف کمیونٹیز کے درمیان احترام، درست معلومات اور کھلے مکالمے کو فروغ دینا کتنا ضروری ہے۔',
       'اسلامک سینٹر نیگاتا باہمی احترام، مقامی جاپانی معاشرے کے ساتھ مثبت روابط اور مختلف ثقافتوں کے درمیان سمجھ بوجھ کو اہمیت دیتا ہے۔ ایسی رپورٹنگ کمیونٹی کی زندگی کے بارے میں معلومات فراہم کرنے اور مختلف پس منظر رکھنے والے افراد کے درمیان مکالمے کے مواقع پیدا کرنے میں مدد دے سکتی ہے۔',
-      'نوٹ: اس مضمون کا متن فراہم کردہ اردو خلاصے کی بنیاد پر مرتب کیا گیا ہے۔ افراد کے بیانات، اعداد و شمار، کاروباری تفصیلات اور دیگر مخصوص معلومات کی حتمی اشاعت سے پہلے اصل اخباری متن سے تصدیق کی جائے۔',
     ],
-    gallery: [],
-    reviewImages: [
-      { url: nippo1.url, alt: 'نیگاتا نیپو میں نیگاتا کی مسلم کمیونٹی سے متعلق رپورٹ — نمازِ جمعہ اور مسجد', width: 814, height: 771 },
+    cover: { url: nippo1.url, alt: 'نیگاتا نیپو میں نیگاتا کی مسلم کمیونٹی سے متعلق رپورٹ — نمازِ جمعہ اور مسجد', width: 814, height: 771 },
+    gallery: [
       { url: nippo2.url, alt: 'نیگاتا نیپو میں نیگاتا کی مسلم کمیونٹی سے متعلق رپورٹ — حلال خوراک', width: 813, height: 699 },
       { url: nippo3.url, alt: 'نیگاتا نیپو میں نیگاتا کی مسلم کمیونٹی سے متعلق رپورٹ — سوشل میڈیا اور تعصب', width: 813, height: 777 },
     ],
@@ -88,7 +86,7 @@ export const announcements: Announcement[] = [
 ];
 
 /** Published articles only — use for every public list. */
-export const publishedAnnouncements = announcements.filter(a => a.status === 'published');
+export const publishedAnnouncements = announcements.filter(a => a.status === 'published').sort((a, b) => b.date.localeCompare(a.date));
 export const paragraphs = (a: Announcement) => a.body.filter((b): b is string => typeof b === 'string');
 
 export function findAnnouncement(slug: string) { return announcements.find(a => a.slug === slug); }
