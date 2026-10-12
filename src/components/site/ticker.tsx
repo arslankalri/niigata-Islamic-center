@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
 import { publishedAnnouncements as announcements, formatDate, paragraphs } from '@/lib/announcements';
 
@@ -17,11 +18,14 @@ export function AnnouncementTicker() {
     return () => window.clearInterval(id);
   }, [multiple, paused, items.length]);
   if (items.length === 0) return null;
-  const a = items[index % items.length]!;
+  const a = items[index % items.length];
+  if (!a) return null;
   const excerpt = paragraphs(a)[0];
   const go = (d: number) => setIndex(i => (i + d + items.length) % items.length);
   return (
     <section className="announcement-ticker" aria-label={t.tickerLabel} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
+      {a.cover && <img key={a.slug} className="ticker-cover" src={a.cover.url} alt="" aria-hidden="true" width={a.cover.width} height={a.cover.height} />}
+      <div className="ticker-shade" aria-hidden="true" />
       <div className="content-width ticker-inner">
         <span className="ticker-label"><Bell size={15} aria-hidden="true" />{t.tickerLabel}</span>
         <div className="ticker-body" aria-live={multiple && !paused ? 'off' : 'polite'}>
@@ -30,7 +34,7 @@ export function AnnouncementTicker() {
           <p className="ticker-excerpt" lang={a.language} dir="rtl">{excerpt}</p>
         </div>
         <div className="ticker-actions">
-          {multiple && <><button type="button" onClick={() => go(-1)} aria-label={t.prevUpdate}><ChevronLeft size={16} /></button><button type="button" onClick={() => go(1)} aria-label={t.nextUpdate}><ChevronRight size={16} /></button></>}
+          {multiple && <><Button variant="ghost" size="icon" type="button" onClick={() => go(-1)} aria-label={t.prevUpdate}><ChevronLeft size={16} /></Button><Button variant="ghost" size="icon" type="button" onClick={() => go(1)} aria-label={t.nextUpdate}><ChevronRight size={16} /></Button></>}
           <Link to="/announcements/$slug" params={{ slug: a.slug }} className="ticker-link">{t.readAnnouncement}<ArrowRight size={15} /></Link>
         </div>
       </div>

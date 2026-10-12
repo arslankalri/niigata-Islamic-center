@@ -157,6 +157,7 @@
  --gold: oklch(0.76 0.082 85);
  --gold-ink: oklch(0.48 0.065 80);
  --hero-overlay: oklch(0.13 0.02 155 / 57%);
+ --announcement-overlay: oklch(0.18 0.025 162 / 74%);
  --shadow-soft: 0 8px 32px oklch(0.23 0.04 155 / 6%);
 }
 body { margin:0; font-family:var(--font-sans); font-size:14px; line-height:1.7; letter-spacing:0; }
@@ -444,13 +445,15 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .article-gallery img { width:100%; height:260px; object-fit:cover; border-radius:6px; }
 @media (max-width:640px) { .news-article { grid-template-columns:1fr; } .news-article img { width:100%; height:180px; } .article-gallery img { height:auto; aspect-ratio:4/3; } }
 
-.announcement-ticker { background:color-mix(in oklab,var(--forest) 88%,var(--gold)); color:var(--on-forest); border-block:1px solid color-mix(in oklab,var(--gold) 40%,transparent); }
-.ticker-inner { display:flex; align-items:center; gap:18px; padding-block:12px; min-width:0; }
+.announcement-ticker { position:relative; isolation:isolate; overflow:hidden; background:var(--forest); color:var(--on-forest); border-block:1px solid color-mix(in oklab,var(--gold) 40%,transparent); }
+.ticker-cover { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 45%; z-index:-2; }
+.ticker-shade { position:absolute; inset:0; background:var(--announcement-overlay); z-index:-1; pointer-events:none; }
+.ticker-inner { position:relative; display:flex; align-items:center; gap:18px; padding-block:12px; min-width:0; }
 .ticker-label { display:inline-flex; align-items:center; gap:7px; color:var(--gold); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; }
 .ticker-body { flex:1; min-width:0; display:grid; gap:2px; }
-.ticker-body time { font-size:12px; opacity:.75; }
+.ticker-body time { font-size:12px; }
 .ticker-title { font-family:'Noto Naskh Arabic',serif; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:start; }
-.ticker-excerpt { font-family:'Noto Naskh Arabic',serif; font-size:13px; opacity:.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ticker-excerpt { font-family:'Noto Naskh Arabic',serif; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ticker-actions { display:flex; align-items:center; gap:6px; }
 .ticker-actions button { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid color-mix(in oklab,var(--on-forest) 30%,transparent); border-radius:999px; }
 [dir='rtl'] .ticker-actions svg { transform:scaleX(-1); }
