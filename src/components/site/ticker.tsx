@@ -17,7 +17,7 @@ export function AnnouncementTicker() {
     return () => window.clearInterval(id);
   }, [multiple, paused, items.length]);
   if (items.length === 0) return null;
-  const a = items[index % items.length];
+  const a = items[index % items.length]!;
   const excerpt = paragraphs(a)[0];
   const go = (d: number) => setIndex(i => (i + d + items.length) % items.length);
   return (
