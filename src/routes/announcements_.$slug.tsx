@@ -31,6 +31,7 @@ function ArticlePage() {
       <div lang="ur" dir="rtl" className="article-body">
         <p className="article-meta"><span>{a.category ?? ur.articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date, 'ur')}</time></p>
         <h1>{a.title}</h1>
+        {a.author && <p className="article-byline" lang="ur">تحریر: {a.author}</p>}
         {a.cover && <img className="article-cover" src={a.cover.url} alt={a.cover.alt} width={a.cover.width} height={a.cover.height} />}
         {a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h2 key={i}>{p.heading}</h2>)}
         {images.length > 0 && <><h2>{ur.gallery}</h2><div className="article-gallery">{images.map(img => <img key={img.url} src={img.url} alt={img.alt} width={img.width} height={img.height} loading="lazy" />)}</div></>}
