@@ -15,6 +15,8 @@ export type Announcement = {
   status: 'draft' | 'published';
   /** Urdu category label; defaults to the dictionary's articleCategory. */
   category?: string;
+  /** Urdu byline name, e.g. the author/reporter credited with the piece. */
+  author?: string;
   /** First item must be a plain paragraph (used for excerpts). */
   body: (string | { heading: string })[];
   cover?: { url: string; alt: string; width: number; height: number };
@@ -51,6 +53,7 @@ export const announcements: Announcement[] = [
     language: 'ur',
     date: '2026-10-12',
     category: 'کمیونٹی نیوز / میڈیا کوریج',
+    author: 'ملک اللہ یار خان',
     title: 'نیگاتا نیپو کی تین روزہ رپورٹ سیریز: مسجد، مسلم کمیونٹی اور حلال کاروبار پر خصوصی کوریج',
     body: [
       'جاپان کے مقامی اخبار نیگاتا نیپو (Niigata Nippo) میں شائع ہونے والی تین مضامین پر مشتمل رپورٹ سیریز نے نیگاتا میں آباد مسلم کمیونٹی، اس کی مذہبی زندگی، مقامی معاشرے کے ساتھ تعلقات اور حلال خوراک کی ضروریات کے مختلف پہلوؤں کو اجاگر کیا۔',
