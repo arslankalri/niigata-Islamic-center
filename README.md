@@ -1,4 +1,4 @@
-# Niigata Ic Dome Web
+# Niigata Islamic Center
 
 Project: Islamic Center Niigata — Official Website
 
