@@ -467,7 +467,7 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .event-highlight-grid { display:grid; grid-template-columns:minmax(0,320px) minmax(0,1fr); gap:clamp(24px,5vw,56px); align-items:center; }
 .event-poster, .event-page-poster { width:100%; height:auto; object-fit:contain; border-radius:6px; box-shadow:0 12px 30px color-mix(in oklab,var(--foreground) 18%,transparent); }
 .event-highlight-copy h2 { font-size:clamp(24px,4vw,36px); line-height:1.5; color:var(--primary); margin:8px 0 4px; }
-.event-alt-title { font-family:'Noto Naskh Arabic',serif; font-size:18px; text-align:start; margin-bottom:12px; }
+.event-alt-title { font-family:'Noto Naskh Arabic',serif; font-size:18px; text-align:left; margin-bottom:12px; }
 .event-reminder { display:inline-flex; align-items:center; gap:8px; background:var(--gold); color:var(--forest); font-weight:700; padding:8px 14px; border-radius:999px; margin:10px 0 16px; }
 .event-facts { list-style:none; padding:0; display:grid; gap:10px; margin-bottom:22px; }
 .event-facts li { display:flex; gap:10px; align-items:flex-start; line-height:1.6; }
