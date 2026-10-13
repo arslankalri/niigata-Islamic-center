@@ -32,3 +32,4 @@
 - [ ] Transport/parking details and visiting hours (awaiting confirmation).
 - [ ] Center history and wider community/leadership information (awaiting confirmation).
 - [ ] Address confirmation: site uses 2557-1 Tarodai, 950-3101 as supplied; the mosque sign reads 2577-1 Tarodai, 〒950-3102.
+- [x] Publish East Port Clean-Up Campaign event (17 Oct 2026) with poster, event page and homepage highlight.

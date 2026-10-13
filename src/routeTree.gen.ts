@@ -17,6 +17,7 @@ import { Route as FacebookRouteImport } from './routes/facebook'
 import { Route as PrayerTimesRouteImport } from './routes/prayer-times'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AnnouncementsSlugRouteImport } from './routes/announcements_.$slug'
+import { Route as EventsSlugRouteImport } from './routes/events_.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const AnnouncementsSlugRoute = AnnouncementsSlugRouteImport.update({
   path: '/announcements/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/events_/$slug',
+  path: '/events/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
   '/announcements_/$slug': typeof AnnouncementsSlugRoute
+  '/events_/$slug': typeof EventsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/visit'
     | '/announcements/$slug'
+    | '/events/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/visit'
     | '/announcements/$slug'
+    | '/events/$slug'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/visit'
     | '/announcements_/$slug'
+    | '/events_/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   PrayerTimesRoute: typeof PrayerTimesRoute
   VisitRoute: typeof VisitRoute
   AnnouncementsSlugRoute: typeof AnnouncementsSlugRoute
+  EventsSlugRoute: typeof EventsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnnouncementsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events_/$slug': {
+      id: '/events_/$slug'
+      path: '/events/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrayerTimesRoute: PrayerTimesRoute,
   VisitRoute: VisitRoute,
   AnnouncementsSlugRoute: AnnouncementsSlugRoute,
+  EventsSlugRoute: EventsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
