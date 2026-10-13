@@ -84,5 +84,8 @@ export function formatTime(iso: string, language: 'en' | 'ja' | 'ur') {
 }
 export function formatEventDate(iso: string, language: 'en' | 'ja' | 'ur') {
   const locale = language === 'ja' ? 'ja-JP' : language === 'ur' ? 'ur-PK' : 'en-GB';
-  return new Intl.DateTimeFormat(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(new Date(iso));
+  const d = new Date(iso);
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'Asia/Tokyo' }).format(d);
+  const date = new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Tokyo' }).format(d);
+  return language === 'ja' ? `${date}（${weekday}）` : language === 'ur' ? `${weekday}، ${date}` : `${weekday}, ${date}`;
 }
