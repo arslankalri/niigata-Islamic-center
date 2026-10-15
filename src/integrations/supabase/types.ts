@@ -14,16 +14,142 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      announcement_images: {
+        Row: {
+          alt: Json
+          announcement_id: string
+          caption: Json
+          created_at: string
+          height: number | null
+          id: string
+          sort_order: number
+          storage_path: string
+          width: number | null
+        }
+        Insert: {
+          alt?: Json
+          announcement_id: string
+          caption?: Json
+          created_at?: string
+          height?: number | null
+          id?: string
+          sort_order?: number
+          storage_path: string
+          width?: number | null
+        }
+        Update: {
+          alt?: Json
+          announcement_id?: string
+          caption?: Json
+          created_at?: string
+          height?: number | null
+          id?: string
+          sort_order?: number
+          storage_path?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_images_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          author: string | null
+          body: Json
+          category: Json
+          cover_image_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          primary_language: string
+          publish_date: string
+          slug: string
+          status: string
+          title: Json
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          body?: Json
+          category?: Json
+          cover_image_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          primary_language?: string
+          publish_date?: string
+          slug: string
+          status?: string
+          title?: Json
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          body?: Json
+          category?: Json
+          cover_image_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          primary_language?: string
+          publish_date?: string
+          slug?: string
+          status?: string
+          title?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_cover_fk"
+            columns: ["cover_image_id"]
+            isOneToOne: false
+            referencedRelation: "announcement_images"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +276,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
