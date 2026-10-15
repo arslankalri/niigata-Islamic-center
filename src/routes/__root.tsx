@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -114,7 +115,18 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function useViewCounter() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
+    import("@/integrations/supabase/client").then(({ supabase }) =>
+      supabase.rpc("record_page_view", { _path: pathname }),
+    ).catch(() => {});
+  }, [pathname]);
+}
+
 function RootComponent() {
+  useViewCounter();
   const { queryClient } = Route.useRouteContext();
 
   return (

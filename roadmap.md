@@ -36,7 +36,7 @@
 
 # Admin panel
 - [x] Phase 1: Cloud enabled; announcements, images, admin roles tables with security rules; private photo storage.
-- [ ] Phase 2: /admin login, logout, protected admin shell (awaiting go-ahead + first admin email).
+- [x] Phase 2: /admin login, logout, admin dashboard, free built-in view counter.
 - [ ] Phase 3: announcement editor (EN/JA/UR, drafts, photos, cover, captions, alt text).
 - [ ] Phase 4: AI writing/translation assistance with human approval.
 - [ ] Phase 5: copy existing articles into the database and switch public pages over; analytics choice.

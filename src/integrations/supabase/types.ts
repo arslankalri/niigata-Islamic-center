@@ -114,6 +114,24 @@ export type Database = {
           },
         ]
       }
+      page_views: {
+        Row: {
+          day: string
+          path: string
+          views: number
+        }
+        Insert: {
+          day?: string
+          path: string
+          views?: number
+        }
+        Update: {
+          day?: string
+          path?: string
+          views?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -147,6 +165,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_page_view: { Args: { _path: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin"
