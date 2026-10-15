@@ -16,3 +16,4 @@
 - Events are static typed records in src/lib/events.ts (no database); the homepage highlight and Events list both read upcomingEvents(), so ended events drop off automatically.
 - Admin access is enforced in the database: roles live in public.user_roles and policies call has_role(); never gate admin data by UI alone or by user metadata.
 - Announcement media lives in the private announcement-media bucket; public read is granted only for files linked to published announcements (workspace blocks public buckets).
+- Public sign-up is disabled in auth settings and the admin login is sign-in only; admin accounts are provisioned manually, never via self-registration.
