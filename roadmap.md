@@ -33,3 +33,10 @@
 - [ ] Center history and wider community/leadership information (awaiting confirmation).
 - [ ] Address confirmation: site uses 2557-1 Tarodai, 950-3101 as supplied; the mosque sign reads 2577-1 Tarodai, 〒950-3102.
 - [x] Publish East Port Clean-Up Campaign event (17 Oct 2026) with poster, event page and homepage highlight.
+
+# Admin panel
+- [x] Phase 1: Cloud enabled; announcements, images, admin roles tables with security rules; private photo storage.
+- [ ] Phase 2: /admin login, logout, protected admin shell (awaiting go-ahead + first admin email).
+- [ ] Phase 3: announcement editor (EN/JA/UR, drafts, photos, cover, captions, alt text).
+- [ ] Phase 4: AI writing/translation assistance with human approval.
+- [ ] Phase 5: copy existing articles into the database and switch public pages over; analytics choice.
