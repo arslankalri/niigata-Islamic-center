@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { createAdminAccount } from "@/lib/admin-signup.functions";
 
 export const Route = createFileRoute("/admin/login")({
   ssr: false,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
@@ -27,39 +29,37 @@ function AdminLogin() {
     e.preventDefault();
     setBusy(true);
     setMsg(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return setMsg("Sign in failed. Please check your email and password.");
-    navigate({ to: "/admin" });
-  }
-
-  async function forgot() {
-    if (!email) return setMsg("Enter your email above first.");
-    setBusy(true);
-    await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setBusy(false);
-    setMsg("If this email is registered, a reset link has been sent.");
+    try {
+      if (mode === "signup") {
+        await createAdminAccount({ data: { email, password } });
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw new Error("Sign in failed. Please check your email and password.");
+      navigate({ to: "/admin" });
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-16">
       <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-card p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-foreground">Admin sign in</h1>
+        <h1 className="text-2xl font-semibold text-foreground">{mode === "signin" ? "Admin sign in" : "Create admin account"}</h1>
         <p className="text-sm text-muted-foreground">Restricted to the authorized administrator.</p>
         <label className="block text-sm text-foreground">Email
           <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2" />
         </label>
         <label className="block text-sm text-foreground">Password
-          <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2" />
+          <input type="password" required minLength={mode === "signup" ? 8 : undefined} autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2" />
         </label>
         {msg && <p role="status" className="text-sm text-muted-foreground">{msg}</p>}
         <button disabled={busy} className="w-full rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-60">
-          {busy ? "Please wait…" : "Sign in"}
+          {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Sign up"}
         </button>
-        <button type="button" onClick={forgot} disabled={busy} className="w-full text-sm text-muted-foreground underline">
-          Forgot password?
+        <button type="button" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMsg(null); }} className="w-full text-sm text-muted-foreground underline">
+          {mode === "signin" ? "First time? Sign up" : "Already have an account? Sign in"}
         </button>
       </form>
     </div>
