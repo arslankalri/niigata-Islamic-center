@@ -33,6 +33,16 @@ function AdminLogin() {
     navigate({ to: "/admin" });
   }
 
+  async function forgot() {
+    if (!email) return setMsg("Enter your email above first.");
+    setBusy(true);
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setBusy(false);
+    setMsg("If this email is registered, a reset link has been sent.");
+  }
+
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4 py-16">
       <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-2xl border border-border bg-card p-8 shadow-sm">
@@ -47,6 +57,9 @@ function AdminLogin() {
         {msg && <p role="status" className="text-sm text-muted-foreground">{msg}</p>}
         <button disabled={busy} className="w-full rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground disabled:opacity-60">
           {busy ? "Please wait…" : "Sign in"}
+        </button>
+        <button type="button" onClick={forgot} disabled={busy} className="w-full text-sm text-muted-foreground underline">
+          Forgot password?
         </button>
       </form>
     </div>

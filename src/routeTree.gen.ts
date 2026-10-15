@@ -15,6 +15,7 @@ import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as FacebookRouteImport } from './routes/facebook'
 import { Route as PrayerTimesRouteImport } from './routes/prayer-times'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as VisitRouteImport } from './routes/visit'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -51,6 +52,11 @@ const PrayerTimesRoute = PrayerTimesRouteImport.update({
   path: '/prayer-times',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VisitRoute = VisitRouteImport.update({
   id: '/visit',
   path: '/visit',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
   '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
   '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
   '/admin/login': typeof AdminLoginRoute
   '/announcements_/$slug': typeof AnnouncementsSlugRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/facebook'
     | '/prayer-times'
+    | '/reset-password'
     | '/visit'
     | '/admin/login'
     | '/announcements/$slug'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/facebook'
     | '/prayer-times'
+    | '/reset-password'
     | '/visit'
     | '/admin/login'
     | '/announcements/$slug'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/facebook'
     | '/prayer-times'
+    | '/reset-password'
     | '/visit'
     | '/admin/login'
     | '/announcements_/$slug'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FacebookRoute: typeof FacebookRoute
   PrayerTimesRoute: typeof PrayerTimesRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   VisitRoute: typeof VisitRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AnnouncementsSlugRoute: typeof AnnouncementsSlugRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrayerTimesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/visit': {
       id: '/visit'
       path: '/visit'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FacebookRoute: FacebookRoute,
   PrayerTimesRoute: PrayerTimesRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   VisitRoute: VisitRoute,
   AdminLoginRoute: AdminLoginRoute,
   AnnouncementsSlugRoute: AnnouncementsSlugRoute,
