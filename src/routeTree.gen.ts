@@ -14,6 +14,8 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as FacebookRouteImport } from './routes/facebook'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MembersRouteImport } from './routes/members'
 import { Route as PrayerTimesRouteImport } from './routes/prayer-times'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as VisitRouteImport } from './routes/visit'
@@ -45,6 +47,16 @@ const EventsRoute = EventsRouteImport.update({
 const FacebookRoute = FacebookRouteImport.update({
   id: '/facebook',
   path: '/facebook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MembersRoute = MembersRouteImport.update({
+  id: '/members',
+  path: '/members',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrayerTimesRoute = PrayerTimesRouteImport.update({
@@ -89,6 +101,8 @@ export interface FileRoutesByFullPath {
   '/announcements': typeof AnnouncementsRoute
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
+  '/login': typeof LoginRoute
+  '/members': typeof MembersRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
@@ -103,6 +117,8 @@ export interface FileRoutesByTo {
   '/announcements': typeof AnnouncementsRoute
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
+  '/login': typeof LoginRoute
+  '/members': typeof MembersRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
@@ -118,6 +134,8 @@ export interface FileRoutesById {
   '/announcements': typeof AnnouncementsRoute
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
+  '/login': typeof LoginRoute
+  '/members': typeof MembersRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
@@ -134,6 +152,8 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/events'
     | '/facebook'
+    | '/login'
+    | '/members'
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
@@ -148,6 +168,8 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/events'
     | '/facebook'
+    | '/login'
+    | '/members'
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
@@ -162,6 +184,8 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/events'
     | '/facebook'
+    | '/login'
+    | '/members'
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
@@ -177,6 +201,8 @@ export interface RootRouteChildren {
   AnnouncementsRoute: typeof AnnouncementsRoute
   EventsRoute: typeof EventsRoute
   FacebookRoute: typeof FacebookRoute
+  LoginRoute: typeof LoginRoute
+  MembersRoute: typeof MembersRoute
   PrayerTimesRoute: typeof PrayerTimesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   VisitRoute: typeof VisitRoute
@@ -221,6 +247,20 @@ declare module '@tanstack/react-router' {
       path: '/facebook'
       fullPath: '/facebook'
       preLoaderRoute: typeof FacebookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/members': {
+      id: '/members'
+      path: '/members'
+      fullPath: '/members'
+      preLoaderRoute: typeof MembersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prayer-times': {
@@ -281,6 +321,8 @@ const rootRouteChildren: RootRouteChildren = {
   AnnouncementsRoute: AnnouncementsRoute,
   EventsRoute: EventsRoute,
   FacebookRoute: FacebookRoute,
+  LoginRoute: LoginRoute,
+  MembersRoute: MembersRoute,
   PrayerTimesRoute: PrayerTimesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   VisitRoute: VisitRoute,
