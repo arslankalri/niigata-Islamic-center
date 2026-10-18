@@ -10,18 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as FacebookRouteImport } from './routes/facebook'
 import { Route as PrayerTimesRouteImport } from './routes/prayer-times'
 import { Route as VisitRouteImport } from './routes/visit'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AnnouncementsSlugRouteImport } from './routes/announcements_.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events_.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -54,6 +61,16 @@ const VisitRoute = VisitRouteImport.update({
   path: '/visit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnnouncementsSlugRoute = AnnouncementsSlugRouteImport.update({
   id: '/announcements_/$slug',
   path: '/announcements/$slug',
@@ -73,6 +90,8 @@ export interface FileRoutesByFullPath {
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
 }
@@ -84,18 +103,23 @@ export interface FileRoutesByTo {
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/announcements': typeof AnnouncementsRoute
   '/events': typeof EventsRoute
   '/facebook': typeof FacebookRoute
   '/prayer-times': typeof PrayerTimesRoute
   '/visit': typeof VisitRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/admin/login': typeof AdminLoginRoute
   '/announcements_/$slug': typeof AnnouncementsSlugRoute
   '/events_/$slug': typeof EventsSlugRoute
 }
@@ -109,6 +133,8 @@ export interface FileRouteTypes {
     | '/facebook'
     | '/prayer-times'
     | '/visit'
+    | '/admin'
+    | '/admin/login'
     | '/announcements/$slug'
     | '/events/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -120,29 +146,36 @@ export interface FileRouteTypes {
     | '/facebook'
     | '/prayer-times'
     | '/visit'
+    | '/admin'
+    | '/admin/login'
     | '/announcements/$slug'
     | '/events/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/announcements'
     | '/events'
     | '/facebook'
     | '/prayer-times'
     | '/visit'
+    | '/_authenticated/admin'
+    | '/admin/login'
     | '/announcements_/$slug'
     | '/events_/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   EventsRoute: typeof EventsRoute
   FacebookRoute: typeof FacebookRoute
   PrayerTimesRoute: typeof PrayerTimesRoute
   VisitRoute: typeof VisitRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   AnnouncementsSlugRoute: typeof AnnouncementsSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
 }
@@ -154,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -198,6 +238,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VisitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/announcements_/$slug': {
       id: '/announcements_/$slug'
       path: '/announcements/$slug'
@@ -215,14 +269,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   EventsRoute: EventsRoute,
   FacebookRoute: FacebookRoute,
   PrayerTimesRoute: PrayerTimesRoute,
   VisitRoute: VisitRoute,
+  AdminLoginRoute: AdminLoginRoute,
   AnnouncementsSlugRoute: AnnouncementsSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
 }
