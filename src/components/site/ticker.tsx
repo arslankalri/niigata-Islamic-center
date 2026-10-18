@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import { ArrowRight, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
-import { publishedAnnouncements as announcements, formatDate, paragraphs } from '@/lib/announcements';
+import { formatDate, paragraphs } from '@/lib/announcements';
+import { useAnnouncements } from '@/lib/announcements-db';
 
 export function AnnouncementTicker() {
   const { t, language } = useLanguage();
-  const items = announcements;
+  const items = useAnnouncements(language);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const multiple = items.length > 1;
@@ -30,8 +31,8 @@ export function AnnouncementTicker() {
         <span className="ticker-label"><Bell size={15} aria-hidden="true" />{t.tickerLabel}</span>
         <div className="ticker-body" aria-live={multiple && !paused ? 'off' : 'polite'}>
           <time dateTime={a.date}>{formatDate(a.date, language)}</time>
-          <p className="ticker-title" lang={a.language} dir="rtl">{a.title}</p>
-          <p className="ticker-excerpt" lang={a.language} dir="rtl">{excerpt}</p>
+          <p className="ticker-title" lang={a.language} dir={a.language === 'ur' ? 'rtl' : 'ltr'}>{a.title}</p>
+          <p className="ticker-excerpt" lang={a.language} dir={a.language === 'ur' ? 'rtl' : 'ltr'}>{excerpt}</p>
         </div>
         <div className="ticker-actions">
           {multiple && <><Button variant="ghost" size="icon" type="button" onClick={() => go(-1)} aria-label={t.prevUpdate}><ChevronLeft size={16} /></Button><Button variant="ghost" size="icon" type="button" onClick={() => go(1)} aria-label={t.nextUpdate}><ChevronRight size={16} /></Button></>}

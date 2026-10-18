@@ -497,3 +497,25 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .event-page-poster { max-width:560px; margin:24px auto; display:block; }
 .event-list { padding-inline-start:22px; margin-bottom:18px; font-size:17px; line-height:2.2; list-style:disc; }
 @media (max-width:720px) { .event-highlight-grid { grid-template-columns:1fr; } .event-poster { max-width:340px; margin-inline:auto; } }
+
+/* Admin dashboard */
+.admin-dash h1 { font-size: 2rem; }
+.admin-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
+.admin-row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.admin-list { list-style: none; padding: 0; display: grid; gap: .5rem; }
+.admin-list button { width: 100%; display: flex; gap: .8rem; align-items: center; text-align: start; padding: .9rem 1rem; border: 1px solid var(--border); border-radius: .6rem; background: var(--card); }
+.admin-list button strong { flex: 1; }
+.admin-empty { padding: 1rem; color: var(--muted-foreground); }
+.admin-badge { font-size: .75rem; padding: .15rem .5rem; border-radius: 99px; background: var(--muted); color: var(--muted-foreground); }
+.admin-badge.live { background: var(--primary); color: var(--primary-foreground); }
+.admin-form { display: grid; gap: 1.2rem; }
+.admin-form label { display: grid; gap: .35rem; font-size: .9rem; font-weight: 500; }
+.admin-form select { height: 2.25rem; border: 1px solid var(--input); border-radius: .4rem; padding: 0 .5rem; background: var(--background); }
+.admin-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.admin-lang { border: 1px solid var(--border); border-radius: .6rem; padding: 1rem; display: grid; gap: .8rem; }
+.admin-lang legend { padding: 0 .4rem; font-weight: 600; }
+.admin-photos { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+.admin-photos img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: .4rem; }
+.admin-photos figcaption { display: flex; justify-content: space-between; font-size: .8rem; padding-top: .25rem; }
+.admin-photos button { text-decoration: underline; }
+.admin-msg { font-weight: 500; }

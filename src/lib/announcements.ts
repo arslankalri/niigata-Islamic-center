@@ -8,7 +8,7 @@ import nippo3 from '@/assets/nippo-3.webp.asset.json';
 export type Announcement = {
   slug: string;
   /** Language the article is written in; it is never shown as a translation. */
-  language: 'ur';
+  language: 'ur' | 'en' | 'ja';
   date: string; // ISO date of the event
   title: string;
   /** Drafts are hidden from lists and the ticker and are marked noindex. */
