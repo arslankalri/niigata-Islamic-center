@@ -19,8 +19,6 @@ import { Route as MembersRouteImport } from './routes/members'
 import { Route as PrayerTimesRouteImport } from './routes/prayer-times'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as VisitRouteImport } from './routes/visit'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AnnouncementsSlugRouteImport } from './routes/announcements_.$slug'
 import { Route as EventsSlugRouteImport } from './routes/events_.$slug'
 
@@ -74,16 +72,6 @@ const VisitRoute = VisitRouteImport.update({
   path: '/visit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AnnouncementsSlugRoute = AnnouncementsSlugRouteImport.update({
   id: '/announcements_/$slug',
   path: '/announcements/$slug',
@@ -106,10 +94,8 @@ export interface FileRoutesByFullPath {
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
-  '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
-  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -122,10 +108,8 @@ export interface FileRoutesByTo {
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
-  '/admin/login': typeof AdminLoginRoute
   '/announcements/$slug': typeof AnnouncementsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
-  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,10 +123,8 @@ export interface FileRoutesById {
   '/prayer-times': typeof PrayerTimesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/visit': typeof VisitRoute
-  '/admin/login': typeof AdminLoginRoute
   '/announcements_/$slug': typeof AnnouncementsSlugRoute
   '/events_/$slug': typeof EventsSlugRoute
-  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,10 +139,8 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
-    | '/admin/login'
     | '/announcements/$slug'
     | '/events/$slug'
-    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -173,10 +153,8 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
-    | '/admin/login'
     | '/announcements/$slug'
     | '/events/$slug'
-    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -189,10 +167,8 @@ export interface FileRouteTypes {
     | '/prayer-times'
     | '/reset-password'
     | '/visit'
-    | '/admin/login'
     | '/announcements_/$slug'
     | '/events_/$slug'
-    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -206,10 +182,8 @@ export interface RootRouteChildren {
   PrayerTimesRoute: typeof PrayerTimesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   VisitRoute: typeof VisitRoute
-  AdminLoginRoute: typeof AdminLoginRoute
   AnnouncementsSlugRoute: typeof AnnouncementsSlugRoute
   EventsSlugRoute: typeof EventsSlugRoute
-  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -284,20 +258,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VisitRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/announcements_/$slug': {
       id: '/announcements_/$slug'
       path: '/announcements/$slug'
@@ -326,10 +286,8 @@ const rootRouteChildren: RootRouteChildren = {
   PrayerTimesRoute: PrayerTimesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   VisitRoute: VisitRoute,
-  AdminLoginRoute: AdminLoginRoute,
   AnnouncementsSlugRoute: AnnouncementsSlugRoute,
   EventsSlugRoute: EventsSlugRoute,
-  AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
