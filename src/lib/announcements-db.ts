@@ -48,11 +48,14 @@ function toAnnouncement({ row, urls }: { row: Row; urls: Record<string, string> 
     .filter(i => urls[i.storage_path])
     .map(i => ({ id: i.id, url: urls[i.storage_path]!, alt: ((i.alt ?? {}) as Texts)[lang] ?? '', width: i.width ?? 1200, height: i.height ?? 900 }));
   const cover = imgs.find(i => i.id === row.cover_image_id) ?? imgs[0];
-  return {
+  const a: Announcement = {
     slug: row.slug, language: lang, status: 'published', date: row.publish_date,
-    title: title[lang] ?? '', body: parseBody(body[lang] ?? ''), category: cat[lang] || undefined,
-    author: row.author || undefined, cover, gallery: imgs.filter(i => i !== cover),
+    title: title[lang] ?? '', body: parseBody(body[lang] ?? ''), gallery: imgs.filter(i => i !== cover),
   };
+  if (cat[lang]) a.category = cat[lang];
+  if (row.author) a.author = row.author;
+  if (cover) a.cover = cover;
+  return a;
 }
 
 const query = { queryKey: ['public-announcements'], queryFn: fetchPublished, staleTime: 5 * 60 * 1000 };

@@ -67,7 +67,7 @@ function Dashboard() {
     const imgs = [...r.announcement_images].sort((a, b) => a.sort_order - b.sort_order);
     if (imgs.length) {
       const { data } = await supabase.storage.from(BUCKET).createSignedUrls(imgs.map(i => i.storage_path), 3600);
-      imgs.forEach(i => { i.url = data?.find(d => d.path === i.storage_path)?.signedUrl ?? undefined; });
+      imgs.forEach(i => { const u = data?.find(d => d.path === i.storage_path)?.signedUrl; if (u) i.url = u; });
     }
     setFiles([]); setMsg('');
     setDraft({ id: r.id, slug: r.slug, status: r.status as Draft['status'], publish_date: r.publish_date, primary_language: (r.primary_language as Lang) || 'ur', title: r.title ?? {}, body: r.body ?? {}, category: r.category ?? {}, author: r.author ?? '', cover_image_id: r.cover_image_id, images: imgs });
