@@ -88,7 +88,7 @@ export async function fetchEditableEvents(): Promise<SiteEvent[]> {
       summary: { en: content.summary?.en ?? '', ja: content.summary?.ja ?? '', ur: content.summary?.ur ?? '' },
       location: { en: content.location?.en ?? '', ja: content.location?.ja ?? '', ur: content.location?.ur ?? '' },
       parking: content.parking ?? '', weather: { en: content.weather?.en ?? '', ja: content.weather?.ja ?? '', ur: content.weather?.ur ?? '' },
-      body: Array.isArray(content.body) ? content.body : bodyText ? bodyText.split(/\\n\\s*\\n/).filter(Boolean) : [],
+      body: Array.isArray(content.body) ? content.body : bodyText ? bodyText.split(/\n\s*\n/).filter(Boolean) : [],
       poster: fallback?.poster ?? { url: poster.url, alt: content.title?.en ?? 'Event poster', width: 1024, height: 1536 },
     };
   });
