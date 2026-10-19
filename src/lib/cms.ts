@@ -37,6 +37,6 @@ export function staticCounts(now = new Date()) {
   return {
     builtInPosts: announcements.filter(a => a.status === 'published').length,
     events: events.filter(e => e.status === 'published').length,
-    upcomingEvents: events.filter(e => e.status === 'published' && new Date(e.end ?? e.start) > now).length,
+    upcomingEvents: events.filter(e => e.status === 'published' && new Date(e.end) > now).length,
   };
 }
