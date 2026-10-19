@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_activity: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+          summary: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          summary?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          summary?: string | null
+        }
+        Relationships: []
+      }
       announcement_images: {
         Row: {
           alt: Json
@@ -63,12 +96,16 @@ export type Database = {
           author: string | null
           body: Json
           category: Json
+          content_type: string
           cover_image_id: string | null
           created_at: string
           created_by: string | null
+          excerpt: Json
           id: string
           primary_language: string
           publish_date: string
+          seo_description: Json
+          seo_title: Json
           slug: string
           status: string
           title: Json
@@ -78,12 +115,16 @@ export type Database = {
           author?: string | null
           body?: Json
           category?: Json
+          content_type?: string
           cover_image_id?: string | null
           created_at?: string
           created_by?: string | null
+          excerpt?: Json
           id?: string
           primary_language?: string
           publish_date?: string
+          seo_description?: Json
+          seo_title?: Json
           slug: string
           status?: string
           title?: Json
@@ -93,12 +134,16 @@ export type Database = {
           author?: string | null
           body?: Json
           category?: Json
+          content_type?: string
           cover_image_id?: string | null
           created_at?: string
           created_by?: string | null
+          excerpt?: Json
           id?: string
           primary_language?: string
           publish_date?: string
+          seo_description?: Json
+          seo_title?: Json
           slug?: string
           status?: string
           title?: Json

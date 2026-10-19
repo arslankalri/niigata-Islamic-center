@@ -15,6 +15,13 @@
       "when": 1792043388269,
       "tag": "0001_admin_bootstrap_and_page_views",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792406990102,
+      "tag": "0002_cms_articles_activity",
+      "breakpoints": true
     }
   ]
 }
