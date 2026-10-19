@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { publishedAnnouncements, type Announcement } from '@/lib/announcements';
+import { findAnnouncement, publishedAnnouncements, type Announcement } from '@/lib/announcements';
 
 export type Lang = 'en' | 'ja' | 'ur';
 type Texts = Partial<Record<Lang, string>>;
@@ -56,6 +56,11 @@ function toAnnouncement({ row, urls }: { row: Row; urls: Record<string, string> 
   if (cat[lang]) a.category = cat[lang];
   if (row.author) a.author = row.author;
   if (cover) a.cover = cover;
+  // Existing code-managed articles may be moved into the database from the admin editor.
+  // Retain their already-published static media until an admin adds replacement uploads.
+  const legacy = findAnnouncement(row.slug);
+  if (!a.cover && legacy?.cover) a.cover = legacy.cover;
+  if (a.gallery.length === 0 && legacy?.gallery?.length) a.gallery = legacy.gallery;
   return a;
 }
 
