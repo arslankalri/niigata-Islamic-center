@@ -236,6 +236,29 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
     (!search || [r.slug, ...Object.values(r.title ?? {})].join(' ').toLowerCase().includes(search.toLowerCase())));
   const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ['admin-announcements'] }), qc.invalidateQueries({ queryKey: ['public-announcements'] }), qc.invalidateQueries({ queryKey: ['admin-activity'] })]);
 
+  async function editBuiltIn(a: (typeof builtIn)[number]) {
+    const bodyText = a.body.map(p => typeof p === 'string' ? p : '## ' + p.heading).join('\\n\\n');
+    setFiles([]);
+    setMsg('This existing article will be saved as an editable database-backed article. Its current public photos will remain as fallback until you replace or upload images in the editor.');
+    setPreview(null);
+    setDraft({
+      content_type: 'article',
+      slug: a.slug,
+      status: a.status === 'published' ? 'published' : 'draft',
+      publish_date: a.date,
+      primary_language: a.language,
+      title: { [a.language]: a.title },
+      body: { [a.language]: bodyText },
+      category: { [a.language]: a.category ?? '' },
+      excerpt: {},
+      seo_title: {},
+      seo_description: {},
+      author: a.author ?? '',
+      cover_image_id: null,
+      images: [],
+    });
+  }
+
   async function edit(r: Row) {
     const imgs = [...r.announcement_images].sort((a, b) => a.sort_order - b.sort_order);
     if (imgs.length) {
@@ -338,8 +361,8 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
       {type === 'article' && (
         <div className="admin-card" style={{ marginTop: '1.5rem' }}>
           <h2>Existing published articles (code-managed)</h2>
-          <p>These existing stories are now listed under News &amp; Articles, not Announcements. Their content is currently stored in the website source, so editing them requires moving them into the database-backed editor.</p>
-          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
+          <p>These existing articles can be opened in the editor and saved into the database. Saving with the same web address makes the editable version take precedence while preserving existing public images as a fallback.</p>
+          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><Button size="sm" onClick={() => editBuiltIn(a)}>Edit in CMS</Button><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
         </div>
       )}
     </div>
