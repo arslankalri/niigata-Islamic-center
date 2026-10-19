@@ -1,10 +1,10 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { ArrowLeft, CalendarDays, Car, Clock3, CloudRain, MapPin, UserCheck } from 'lucide-react';
-import { findEvent, formatEventDate, formatTime } from '@/lib/events';
+import { findEditableEvent, findEvent, formatEventDate, formatTime } from '@/lib/events';
 import { useLanguage } from '@/components/site/language';
 
 export const Route = createFileRoute('/events_/$slug')({
-  loader: ({ params }) => { const e = findEvent(params.slug); if (!e) throw notFound(); return e; },
+  loader: async ({ params }) => { const saved = await findEditableEvent(params.slug); const e = saved ?? findEvent(params.slug); if (!e) throw notFound(); return e; },
   head: ({ loaderData }) => {
     const title = loaderData ? `${loaderData.title.en} — Islamic Center Niigata` : 'Event — Islamic Center Niigata';
     const description = loaderData ? loaderData.summary.en : 'Event from Islamic Center Niigata.';
