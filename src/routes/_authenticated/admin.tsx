@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { BUCKET, parseBody, type Lang } from '@/lib/announcements-db';
 import { announcements as builtIn } from '@/lib/announcements';
 import { events } from '@/lib/events';
+import { prayerTimesUrl } from '@/lib/translations';
 import { ADMIN_SECTIONS, isSection, slugify, staticCounts, validatePost, type ContentType, type Section, type Status } from '@/lib/cms';
 
 export const Route = createFileRoute('/_authenticated/admin')({
@@ -96,9 +97,9 @@ function Dashboard() {
       {section === 'announcements' && <PostManager key="a" type="announcement" rows={rows} />}
       {section === 'articles' && <PostManager key="n" type="article" rows={rows} />}
       {section === 'events' && <EventsInfo />}
-      {section === 'prayer' && <PrayerScheduleManager />}
+      {section === 'prayer' && <PrayerSourceInfo />}
       {section === 'media' && <Media rows={rows} />}
-      {section === 'analytics' && <Info title="Analytics">Visitor statistics (visitors, page views, top pages, sources, devices) are collected by the website hosting and can be viewed in the Lovable project's analytics panel. They are not yet shown inside this dashboard, because reading them here would need a secure server connection that is not set up. No numbers are shown here so nothing is guessed.</Info>}
+      {section === 'analytics' && <AnalyticsInfo />}
       {section === 'settings' && <SettingsManager />}
       {section === 'activity' && <Activity />}
     </section>
@@ -141,10 +142,19 @@ function EventsInfo() {
 }
 function Media({ rows }: { rows: Row[] }) {
   const [search, setSearch] = useState('');
-  const q = useQuery({ queryKey: ['admin-media-library'], queryFn: async () => { const { data, error } = await supabase.from('announcement_images').select('id, announcement_id, storage_path, alt, width, height, sort_order, created_at').order('created_at', { ascending: false }); if (error) throw error; return data ?? []; } });
+  const q = useQuery({ queryKey: ['admin-media-library'], queryFn: async () => {
+    const { data, error } = await supabase.from('announcement_images').select('id, announcement_id, storage_path, alt, width, height, sort_order, created_at').order('created_at', { ascending: false });
+    if (error) throw error;
+    const entries = data ?? [];
+    const paths = [...new Set(entries.map((i: any) => i.storage_path).filter(Boolean))];
+    const { data: signed, error: signedError } = paths.length ? await supabase.storage.from(BUCKET).createSignedUrls(paths, 3600) : { data: [], error: null };
+    if (signedError) throw signedError;
+    const byPath = new Map((signed ?? []).map((s: any) => [s.path, s.signedUrl]));
+    return entries.map((i: any) => ({ ...i, url: byPath.get(i.storage_path) ?? null }));
+  } });
   const entries = (q.data ?? []).filter((i: any) => !search || i.storage_path.toLowerCase().includes(search.toLowerCase()) || JSON.stringify(i.alt ?? {}).toLowerCase().includes(search.toLowerCase()));
   const count = rows.reduce((a, r) => a + r.announcement_images.length, 0);
-  return <div className="admin-card"><h2>Media Library</h2><p>{count} image reference(s) in the current post list. Search uploaded images and copy a storage path to reuse it in content.</p><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by filename or alt text" />{q.isLoading && <p>Loading media…</p>}{q.error && <p role="alert">Could not load media: {q.error.message}</p>}<ul className="admin-list">{entries.map((i: any) => <li key={i.id} className="admin-item"><strong>{i.storage_path.split('/').pop()}</strong><span>{JSON.stringify(i.alt ?? {})}</span><span>{i.width ?? '?'} × {i.height ?? '?'}</span><Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(i.storage_path)}>Copy storage path</Button></li>)}</ul>{entries.length === 0 && !q.isLoading && <p>No matching uploaded images found.</p>}</div>;
+  return <div className="admin-card"><h2>Media Library</h2><p>{count} image reference(s) in the current post list. Images below are loaded from the existing announcement-media storage bucket.</p><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by filename or alt text" />{q.isLoading && <p>Loading media…</p>}{q.error && <p role="alert">Could not load media: {q.error.message}</p>}<div className="admin-media-grid">{entries.map((i: any) => <article key={i.id} className="admin-media-card">{i.url ? <img src={i.url} alt={typeof i.alt === 'string' ? i.alt : Object.values(i.alt ?? {}).find(Boolean) as string ?? ''} loading="lazy" /> : <div className="admin-media-missing">Image unavailable</div>}<strong>{i.storage_path.split('/').pop()}</strong><span>{i.width ?? '?'} × {i.height ?? '?'}</span><Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(i.storage_path)}>Copy storage path</Button></article>)}</div>{entries.length === 0 && !q.isLoading && <p>No matching uploaded images found.</p>}</div>;
 }
 function SettingsManager() {
   const qc = useQueryClient();
@@ -157,16 +167,25 @@ function SettingsManager() {
   return <div className="admin-card"><h2>Website Settings</h2><p>Edit contact details, social links and homepage notices. Values are stored persistently; public page wiring is still required.</p>{q.error && <p role="alert">Could not load settings: {q.error.message}</p>}<div style={{ display: 'grid', gap: '1rem', maxWidth: 760 }}>{fields.map(([key, label]) => <label key={key}>{label}{key.startsWith('notice_') ? <Textarea rows={3} value={value[key] ?? ''} onChange={e => setValue({ ...value, [key]: e.target.value })} /> : <Input value={value[key] ?? ''} onChange={e => setValue({ ...value, [key]: e.target.value })} />}</label>)}</div>{msg && <p role="status">{msg}</p>}<Button onClick={save} disabled={busy || q.isLoading}>{busy ? 'Saving…' : 'Save settings'}</Button></div>;
 }
 
-function PrayerScheduleManager() {
-  const qc = useQueryClient();
-  const [schedule, setSchedule] = useState<Record<string, string>>({ fajr: '', sunrise: '', dhuhr: '', asr: '', maghrib: '', isha: '', jumuah: '' });
-  const [sourceNote, setSourceNote] = useState(''); const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false);
-  const q = useQuery({ queryKey: ['admin-prayer-schedule'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_prayer_schedule').select('*').eq('id', true).maybeSingle(); if (error) throw error; return data; } });
-  useEffect(() => { if (q.data) { setSchedule(s => ({ ...s, ...(q.data.schedule ?? {}) })); setSourceNote(q.data.source_note ?? ''); } }, [q.data]);
-  async function save() { setBusy(true); setMsg(''); try { const { data: auth } = await supabase.auth.getUser(); const { error } = await (supabase as any).from('site_prayer_schedule').upsert({ id: true, schedule, source_note: sourceNote, updated_at: new Date().toISOString(), updated_by: auth.user?.id ?? null }); if (error) throw error; await logActivity('update', 'prayer_schedule', null, 'Updated draft prayer schedule'); await qc.invalidateQueries({ queryKey: ['admin-prayer-schedule'] }); setMsg('Saved as a draft. The public prayer display remains on the official external schedule until these times are verified.'); } catch (e) { setMsg(e instanceof Error ? e.message : 'Could not save. Apply migration 0003 first.'); } finally { setBusy(false); } }
-  const names: [string, string][] = [['fajr','Fajr'],['sunrise','Sunrise'],['dhuhr','Dhuhr'],['asr','Asr'],['maghrib','Maghrib'],['isha','Isha'],['jumuah','Jumu’ah']];
-  return <div className="admin-card"><h2>Prayer Times</h2><p>Enter mosque-approved times in 24-hour format. This saves an admin-maintained draft and does not override the official live display.</p><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '1rem' }}>{names.map(([key, label]) => <label key={key}>{label}<Input type="time" value={schedule[key] ?? ''} onChange={e => setSchedule({ ...schedule, [key]: e.target.value })} /></label>)}</div><label>Source / verification note<Textarea rows={3} value={sourceNote} onChange={e => setSourceNote(e.target.value)} placeholder="Who confirmed these times and for which date/season?" /></label>{q.error && <p role="alert">Could not load schedule: {q.error.message}</p>}{msg && <p role="status">{msg}</p>}<Button onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save prayer schedule draft'}</Button></div>;
+function PrayerSourceInfo() {
+  return <div className="admin-card">
+    <h2>Prayer Times — Official Source</h2>
+    <p>Prayer times are managed by the existing external schedule. This dashboard does not duplicate or override those values.</p>
+    <p><strong>Current data source:</strong> <a href={prayerTimesUrl} target="_blank" rel="noopener noreferrer">{prayerTimesUrl}</a></p>
+    <p>Use this link to open the live schedule. If the provider or URL changes, update the source in the website code and verify the public prayer-times page.</p>
+    <Button asChild><a href={prayerTimesUrl} target="_blank" rel="noopener noreferrer">Open official prayer times</a></Button>
+  </div>;
 }
+
+function AnalyticsInfo() {
+  return <div className="admin-card">
+    <h2>Visitor Analytics</h2>
+    <p>Live visitor counts are not yet connected to this admin dashboard. I have not displayed guessed or fabricated numbers.</p>
+    <p>The existing hosting analytics are available in the hosting/project analytics panel. To show visitor totals, page views, top pages, referrers and devices here, the site needs a verified analytics data source or first-party event collection with admin-only read access.</p>
+    <p><strong>Implementation status:</strong> Not integrated into this dashboard yet.</p>
+  </div>;
+}
+
 function Activity() {
   const q = useQuery({ queryKey: ['admin-activity'], queryFn: async () => {
     const { data, error } = await supabase.from('admin_activity').select('*').order('created_at', { ascending: false }).limit(100);
@@ -299,11 +318,11 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
         ))}
         {visible.length === 0 && <li className="admin-empty">No {noun}s here yet.</li>}
       </ul>
-      {type === 'announcement' && (
+      {type === 'article' && (
         <div className="admin-card" style={{ marginTop: '1.5rem' }}>
-          <h2>Built-in articles (read-only)</h2>
-          <p>These are part of the website code and always stay published. They cannot be edited here, and their web addresses are reserved.</p>
-          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span></li>)}</ul>
+          <h2>Existing published articles (code-managed)</h2>
+          <p>These existing stories are now listed under News &amp; Articles, not Announcements. Their content is currently stored in the website source, so editing them requires moving them into the database-backed editor.</p>
+          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
         </div>
       )}
     </div>
