@@ -12,7 +12,7 @@ import type { ReactNode } from 'react';
 import { formatDate, paragraphs } from '@/lib/announcements';
 import { useAnnouncements } from '@/lib/announcements-db';
 import { dictionaries } from '@/lib/translations';
-import { upcomingEvents } from '@/lib/events';
+import { fetchEditableEvents, upcomingEvents } from '@/lib/events';
 import { EventCard } from './events';
 function usePublicSiteSettings() { const q = useQuery({ queryKey: ['public-site-settings'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_settings').select('value').eq('key', 'public').maybeSingle(); if (error) throw error; return (data?.value ?? {}) as Record<string, string>; }, staleTime: 60_000 }); return q.data ?? {}; }
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
@@ -33,7 +33,12 @@ export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events
  const announcements=useAnnouncements(language);
  const settings=usePublicSiteSettings();
  const siteNotice=settings[`notice_${language}`]?.trim();
- const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{event&&upcomingEvents().length>0?upcomingEvents().map(e=><EventCard key={e.slug} e={e}/>):!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover?.url} alt={a.cover?.alt ?? ''} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang={a.language}>{a.category ?? dictionaries[a.language].articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang={a.language} dir={a.language==='ur'?'rtl':'ltr'}>{a.title}</h3>{a.language==='ur'&&t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
+ const savedEvents = useQuery({ queryKey: ['public-site-events'], queryFn: fetchEditableEvents, staleTime: 60_000 });
+ const staticEvents = upcomingEvents();
+ const dbEvents = savedEvents.data ?? [];
+ const eventSlugs = new Set(dbEvents.map(e => e.slug));
+ const visibleEvents = [...dbEvents, ...staticEvents.filter(e => !eventSlugs.has(e.slug))].filter(e => new Date(e.end) > new Date()).sort((a,b) => a.start.localeCompare(b.start));
+ const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{event&&visibleEvents.length>0?visibleEvents.map(e=><EventCard key={e.slug} e={e}/>):!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover?.url} alt={a.cover?.alt ?? ''} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang={a.language}>{a.category ?? dictionaries[a.language].articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang={a.language} dir={a.language==='ur'?'rtl':'ltr'}>{a.title}</h3>{a.language==='ur'&&t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
  return <section className="content-width section-space news-section">{siteNotice && <div className="admin-public-notice" lang={language} dir={language==='ur'?'rtl':'ltr'}>{siteNotice}</div>}{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
 }
 export function AboutSection({full=false}: {full?:boolean}) {
