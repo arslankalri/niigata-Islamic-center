@@ -40,3 +40,4 @@
 - [ ] Phase 3: announcement editor (EN/JA/UR, drafts, photos, cover, captions, alt text).
 - [ ] Phase 4: AI writing/translation assistance with human approval.
 - [ ] Phase 5: copy existing articles into the database and switch public pages over; analytics choice.
+- Admin dashboard sections (overview, articles, activity log); events/settings/analytics/media editing still read-only.

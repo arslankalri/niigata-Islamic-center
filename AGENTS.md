@@ -18,3 +18,4 @@
 - Announcement media lives in the private announcement-media bucket; public read is granted only for files linked to published announcements (workspace blocks public buckets).
 - Admin sign-in is Google-only at /admin/login (email/password disabled); any Google account can authenticate, but only accounts holding the admin row in user_roles (granted by the grant_initial_admin trigger) can use /admin, enforced by RLS.
 - Dashboard-published announcements are merged client-side with the static built-in list via useAnnouncements(); static articles remain the SSR fallback.
+- Dashboard posts share the announcements table, separated by content_type; built-in article slugs are reserved so the DB never overrides them.
