@@ -178,6 +178,20 @@ function PrayerSourceInfo() {
 }
 
 function AnalyticsInfo() {
+  const live = useQuery({
+    queryKey: ['lovable-live-analytics'],
+    queryFn: async () => {
+      const end = new Date().toISOString().slice(0, 10);
+      const start = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      const { data, error } = await supabase.functions.invoke('lovable-analytics', { body: { start_date: start, end_date: end } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      return data as { analytics: any; trend: any; fetched_at: string; start_date: string; end_date: string };
+    },
+    refetchInterval: 60_000,
+    refetchIntervalInBackground: false,
+    retry: 1,
+  });
   const q = useQuery({ queryKey: ['admin-site-analytics'], queryFn: async () => {
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data, error } = await (supabase as any).from('site_analytics_events').select('session_id,page_path,referrer_host,source,device_type,created_at').gte('created_at', since).order('created_at', { ascending: false }).limit(10000);
@@ -185,34 +199,57 @@ function AnalyticsInfo() {
     return data ?? [];
   }, refetchInterval: 60_000 });
   const data = q.data ?? [];
+  const analytics = live.data?.analytics;
+  const summary = analytics?.summary ?? {};
+  const trend = live.data?.trend;
   const unique = (key: string) => [...new Set(data.map((r: any) => r[key]).filter(Boolean))].length;
   const tally = (key: string) => Object.entries(data.reduce((a: Record<string, number>, r: any) => { const v = r[key] || 'Unknown'; a[v] = (a[v] ?? 0) + 1; return a; }, {})).sort((a,b) => b[1] - a[1]).slice(0, 8);
   const stat = (label: string, value: string | number, note: string) => <div className="admin-card"><span>{label}</span><strong>{typeof value === 'number' ? value.toLocaleString() : value}</strong><small>{note}</small></div>;
+  const fmtDuration = (value: unknown) => {
+    const seconds = Number(value);
+    if (!Number.isFinite(seconds) || seconds < 0) return '—';
+    const mins = Math.floor(seconds / 60);
+    return mins ? `${mins}m ${Math.round(seconds % 60)}s` : `${Math.round(seconds)}s`;
+  };
+  const listItems = (group: any) => (group?.items ?? group?.data ?? []).slice(0, 8);
+  const visitorsSeries = analytics?.time_series?.points ?? analytics?.timeSeries?.visitors?.data ?? [];
+  const visitorCount = summary.visitors ?? summary.total_visitors;
+  const pageviews = summary.pageviews ?? summary.page_views;
+  const bounce = summary.bounce_rate;
+  const bounceLabel = typeof bounce === 'number' ? `${bounce <= 1 ? Math.round(bounce * 100) : Math.round(bounce)}%` : '—';
+  const currentVisitors = trend?.current_visitors ?? trend?.currentVisitors;
   return <div>
-    <div className="admin-top"><div><h2>Visitor Analytics</h2><p>Historical Lovable analytics snapshot, with first-party tracking shown separately below.</p></div><Button variant="outline" onClick={() => q.refetch()}>Refresh first-party data</Button></div>
-    <h3>Lovable analytics · retrieved 19 October 2026</h3>
-    <p>Historical metrics from the connected Lovable project. These are kept separate from this site's first-party tracker to avoid mixing or double-counting.</p>
-    <div className="admin-stats">
-      {stat('Visitors', 140, 'Lovable historical total')}
-      {stat('Page views', 323, 'Lovable historical total')}
-      {stat('Page views per visit', '2.31', 'Lovable historical average')}
-      {stat('Average session duration', '8m 37s', 'Lovable historical average')}
-      {stat('Bounce rate', '60%', 'Lovable historical average')}
-    </div>
-    <div className="admin-card" style={{ marginTop: '1rem' }}><h3>Daily visitors · Lovable</h3><ul className="admin-list">{[
-      ['11 Oct 2026', 81], ['12 Oct 2026', 33], ['13 Oct 2026', 8], ['14 Oct 2026', 4], ['15 Oct 2026', 2], ['16 Oct 2026', 5], ['17 Oct 2026', 6], ['18 Oct 2026', 0], ['19 Oct 2026', 1],
-    ].map(([day, count]) => <li className="admin-item" key={day}><strong>{day}</strong><span>{count} visitors</span></li>)}</ul></div>
+    <div className="admin-top"><div><h2>Visitor Analytics</h2><p>Live Lovable project analytics and this website's first-party tracking are shown separately.</p></div><div className="admin-row"><Button variant="outline" onClick={() => { void live.refetch(); void q.refetch(); }}>Refresh now</Button></div></div>
+    <div className="admin-top"><div><h3>Lovable analytics · live API</h3><p>Last 30 days · refreshes automatically every 60 seconds while this page is open.</p></div><span className="admin-badge live">{live.isFetching ? 'Updating…' : live.error ? 'Sync error' : 'Connected'}</span></div>
+    {live.error && <div className="admin-card" role="alert"><p>Could not sync Lovable analytics: {(live.error as Error).message}</p><p>Check the LOVABLE_API_KEY secret and the Supabase Edge Function deployment.</p></div>}
+    {!analytics && live.isLoading && <div className="admin-card"><p>Loading live Lovable analytics…</p></div>}
+    {analytics && <div className="admin-stats">
+      {stat('Visitors', Number(visitorCount ?? 0), 'Lovable · last 30 days')}
+      {stat('Page views', Number(pageviews ?? 0), 'Lovable · last 30 days')}
+      {stat('Page views per visit', Number(summary.pageviews_per_visit ?? summary.pageviewsPerVisit ?? 0) ? Number(summary.pageviews_per_visit ?? summary.pageviewsPerVisit).toFixed(2) : '—', 'Lovable summary')}
+      {stat('Average session duration', fmtDuration(summary.avg_visit_duration_seconds ?? summary.average_session_duration_seconds ?? summary.session_duration_seconds), 'Lovable summary')}
+      {stat('Bounce rate', bounceLabel, 'Lovable summary')}
+      {stat('Current visitors', Number(currentVisitors ?? 0), 'Realtime trend · last 30 minutes')}
+    </div>}
+    {live.data?.fetched_at && <p className="admin-empty">Last successful sync: {new Date(live.data.fetched_at).toLocaleString()} · data range {live.data.start_date} to {live.data.end_date}.</p>}
+    {analytics && <div className="admin-grid" style={{ marginTop: '1rem' }}>
+      <div className="admin-card"><h3>Top pages · Lovable</h3><ul className="admin-list">{listItems(analytics.top_pages ?? analytics.lists?.page).map((item: any, i: number) => <li className="admin-item" key={item.label ?? i}><strong>{item.label ?? item.path ?? 'Unknown'}</strong><span>{Number(item.value ?? 0).toLocaleString()} views</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Traffic sources · Lovable</h3><ul className="admin-list">{listItems(analytics.top_sources ?? analytics.lists?.source).map((item: any, i: number) => <li className="admin-item" key={item.label ?? i}><strong>{item.label ?? 'Unknown'}</strong><span>{Number(item.value ?? 0).toLocaleString()} visitors</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Devices · Lovable</h3><ul className="admin-list">{listItems(analytics.top_devices ?? analytics.lists?.device).map((item: any, i: number) => <li className="admin-item" key={item.label ?? i}><strong>{item.label ?? 'Unknown'}</strong><span>{Number(item.value ?? 0).toLocaleString()}</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Countries · Lovable</h3><ul className="admin-list">{listItems(analytics.top_countries ?? analytics.lists?.country).map((item: any, i: number) => <li className="admin-item" key={item.label ?? i}><strong>{item.label ?? 'Unknown'}</strong><span>{Number(item.value ?? 0).toLocaleString()}</span></li>)}</ul></div>
+    </div>}
+    {visitorsSeries.length > 0 && <div className="admin-card" style={{ marginTop: '1rem' }}><h3>Daily visitors · Lovable</h3><ul className="admin-list">{visitorsSeries.slice(-10).map((point: any, i: number) => <li className="admin-item" key={point.ts ?? point.date ?? i}><strong>{String(point.ts ?? point.date ?? point.timestamp ?? '').slice(0, 10)}</strong><span>{Number(point.value ?? 0).toLocaleString()} visitors</span></li>)}</ul></div>}
     <div className="admin-top" style={{ marginTop: '1.5rem' }}><div><h3>First-party analytics</h3><p>Collected by this website's own tracker; requires migration 0004 and deployment.</p></div></div>
     {q.error && <div className="admin-card" role="alert"><p>Could not load first-party analytics: {(q.error as Error).message}</p><p>Apply migration <code>0004_site_analytics.sql</code> and reload the site to begin collecting data.</p></div>}
     <div className="admin-stats">{stat('Page views', data.length, 'First-party · last 30 days')}{stat('Unique sessions', unique('session_id'), 'First-party · last 30 days')}{stat('Pages visited', unique('page_path'), 'First-party · last 30 days')}</div>
-    {!q.isLoading && !q.error && data.length === 0 && <div className="admin-card"><p>No first-party page views recorded yet. This does not mean the website has had no visitors; the Lovable historical figures above confirm traffic. Apply migration 0004 and deploy the updated site to collect future first-party data.</p></div>}
+    {!q.isLoading && !q.error && data.length === 0 && <div className="admin-card"><p>No first-party page views recorded yet. Apply migration 0004 and deploy the updated site to collect first-party data.</p></div>}
     <div className="admin-grid" style={{ marginTop: '1rem' }}>
       <div className="admin-card"><h3>Top pages · first-party</h3><ul className="admin-list">{tally('page_path').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
       <div className="admin-card"><h3>Traffic sources · first-party</h3><ul className="admin-list">{tally('source').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
-      <div className="admin-card"><h3>Referrer domains · first-party</h3><ul className="admin-list">{tally('referrer_host').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} visits</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Referrer domains · first-party</h3><ul className="admin-list">{tally('referrer_host').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
       <div className="admin-card"><h3>Devices · first-party</h3><ul className="admin-list">{tally('device_type').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
     </div>
-    <p className="admin-empty">The Lovable metrics above are a historical snapshot, not a live sync. The first-party tracker stores page paths, referrer host, device category and an anonymous per-tab session identifier; no IP addresses or raw user-agent strings.</p>
+    <p className="admin-empty">Lovable metrics are fetched server-side; the API key is never exposed to the browser. First-party metrics remain separate to avoid double-counting.</p>
   </div>;
 }
 
