@@ -187,19 +187,32 @@ function AnalyticsInfo() {
   const data = q.data ?? [];
   const unique = (key: string) => [...new Set(data.map((r: any) => r[key]).filter(Boolean))].length;
   const tally = (key: string) => Object.entries(data.reduce((a: Record<string, number>, r: any) => { const v = r[key] || 'Unknown'; a[v] = (a[v] ?? 0) + 1; return a; }, {})).sort((a,b) => b[1] - a[1]).slice(0, 8);
-  const stat = (label: string, value: number) => <div className="admin-card"><span>{label}</span><strong>{value.toLocaleString()}</strong><small>Last 30 days</small></div>;
+  const stat = (label: string, value: string | number, note: string) => <div className="admin-card"><span>{label}</span><strong>{typeof value === 'number' ? value.toLocaleString() : value}</strong><small>{note}</small></div>;
   return <div>
-    <div className="admin-top"><div><h2>Visitor Analytics</h2><p>First-party page-view data from this website, excluding admin pages. Refreshes every minute.</p></div><Button variant="outline" onClick={() => q.refetch()}>Refresh</Button></div>
-    {q.error && <div className="admin-card" role="alert"><p>Could not load analytics: {(q.error as Error).message}</p><p>Apply migration <code>0004_site_analytics.sql</code> and reload the site to begin collecting data.</p></div>}
-    <div className="admin-stats">{stat('Page views', data.length)}{stat('Unique sessions (per tab)', unique('session_id'))}{stat('Pages visited', unique('page_path'))}</div>
-    {!q.isLoading && !q.error && data.length === 0 && <div className="admin-card"><p>No page views recorded yet. Apply migration 0004, then visits to public pages will begin appearing here. Historical hosting analytics are not imported.</p></div>}
-    <div className="admin-grid" style={{ marginTop: '1rem' }}>
-      <div className="admin-card"><h3>Top pages</h3><ul className="admin-list">{tally('page_path').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
-      <div className="admin-card"><h3>Traffic sources</h3><ul className="admin-list">{tally('source').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
-      <div className="admin-card"><h3>Referrer domains</h3><ul className="admin-list">{tally('referrer_host').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} visits</span></li>)}</ul></div>
-      <div className="admin-card"><h3>Devices</h3><ul className="admin-list">{tally('device_type').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+    <div className="admin-top"><div><h2>Visitor Analytics</h2><p>Historical Lovable analytics snapshot, with first-party tracking shown separately below.</p></div><Button variant="outline" onClick={() => q.refetch()}>Refresh first-party data</Button></div>
+    <h3>Lovable analytics · retrieved 19 October 2026</h3>
+    <p>Historical metrics from the connected Lovable project. These are kept separate from this site's first-party tracker to avoid mixing or double-counting.</p>
+    <div className="admin-stats">
+      {stat('Visitors', 140, 'Lovable historical total')}
+      {stat('Page views', 323, 'Lovable historical total')}
+      {stat('Page views per visit', '2.31', 'Lovable historical average')}
+      {stat('Average session duration', '8m 37s', 'Lovable historical average')}
+      {stat('Bounce rate', '60%', 'Lovable historical average')}
     </div>
-    <p className="admin-empty">Privacy note: this records page paths, referrer host, device category, and an anonymous session identifier for the current tab. It does not store IP addresses or raw user-agent strings. Data begins only after migration 0004 is applied.</p>
+    <div className="admin-card" style={{ marginTop: '1rem' }}><h3>Daily visitors · Lovable</h3><ul className="admin-list">{[
+      ['11 Oct 2026', 81], ['12 Oct 2026', 33], ['13 Oct 2026', 8], ['14 Oct 2026', 4], ['15 Oct 2026', 2], ['16 Oct 2026', 5], ['17 Oct 2026', 6], ['18 Oct 2026', 0], ['19 Oct 2026', 1],
+    ].map(([day, count]) => <li className="admin-item" key={day}><strong>{day}</strong><span>{count} visitors</span></li>)}</ul></div>
+    <div className="admin-top" style={{ marginTop: '1.5rem' }}><div><h3>First-party analytics</h3><p>Collected by this website's own tracker; requires migration 0004 and deployment.</p></div></div>
+    {q.error && <div className="admin-card" role="alert"><p>Could not load first-party analytics: {(q.error as Error).message}</p><p>Apply migration <code>0004_site_analytics.sql</code> and reload the site to begin collecting data.</p></div>}
+    <div className="admin-stats">{stat('Page views', data.length, 'First-party · last 30 days')}{stat('Unique sessions', unique('session_id'), 'First-party · last 30 days')}{stat('Pages visited', unique('page_path'), 'First-party · last 30 days')}</div>
+    {!q.isLoading && !q.error && data.length === 0 && <div className="admin-card"><p>No first-party page views recorded yet. This does not mean the website has had no visitors; the Lovable historical figures above confirm traffic. Apply migration 0004 and deploy the updated site to collect future first-party data.</p></div>}
+    <div className="admin-grid" style={{ marginTop: '1rem' }}>
+      <div className="admin-card"><h3>Top pages · first-party</h3><ul className="admin-list">{tally('page_path').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Traffic sources · first-party</h3><ul className="admin-list">{tally('source').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Referrer domains · first-party</h3><ul className="admin-list">{tally('referrer_host').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} visits</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Devices · first-party</h3><ul className="admin-list">{tally('device_type').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+    </div>
+    <p className="admin-empty">The Lovable metrics above are a historical snapshot, not a live sync. The first-party tracker stores page paths, referrer host, device category and an anonymous per-tab session identifier; no IP addresses or raw user-agent strings.</p>
   </div>;
 }
 
