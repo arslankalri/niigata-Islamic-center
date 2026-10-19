@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -13,6 +14,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/components/site/language";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteShell } from "@/components/site/shell";
 
 function NotFoundComponent() {
@@ -116,6 +118,27 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || location.pathname.startsWith('/admin')) return;
+    const key = 'niigata-analytics-session';
+    let sessionId = window.sessionStorage.getItem(key);
+    if (!sessionId) {
+      sessionId = window.crypto.randomUUID();
+      window.sessionStorage.setItem(key, sessionId);
+    }
+    const ua = navigator.userAgent;
+    const device = /tablet|ipad/i.test(ua) ? 'tablet' : /mobile|android|iphone/i.test(ua) ? 'mobile' : 'desktop';
+    const referrer = document.referrer ? (() => { try { return new URL(document.referrer).hostname; } catch { return ''; } })() : '';
+    void supabase.from('site_analytics_events').insert({
+      session_id: sessionId,
+      page_path: location.pathname,
+      referrer_host: referrer || null,
+      device_type: device,
+      source: referrer ? (referrer === window.location.hostname ? 'internal' : 'referral') : 'direct',
+    }).then(({ error }) => { if (error && import.meta.env.DEV) console.warn('Analytics event not recorded; apply migration 0004.', error.message); });
+  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
