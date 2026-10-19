@@ -96,10 +96,10 @@ function Dashboard() {
       {section === 'announcements' && <PostManager key="a" type="announcement" rows={rows} />}
       {section === 'articles' && <PostManager key="n" type="article" rows={rows} />}
       {section === 'events' && <EventsInfo />}
-      {section === 'prayer' && <Info title="Prayer Times">The website shows the mosque's official live schedule from mosquetimedisplay.web.app/m. Times are managed on that service, not here. No prayer times are stored or calculated by this website.</Info>}
+      {section === 'prayer' && <PrayerScheduleManager />}
       {section === 'media' && <Media rows={rows} />}
       {section === 'analytics' && <Info title="Analytics">Visitor statistics (visitors, page views, top pages, sources, devices) are collected by the website hosting and can be viewed in the Lovable project's analytics panel. They are not yet shown inside this dashboard, because reading them here would need a secure server connection that is not set up. No numbers are shown here so nothing is guessed.</Info>}
-      {section === 'settings' && <Info title="Website Settings">Address, contact details, translations and page text are currently part of the website's code and are changed by request. Editing them here is not available yet.</Info>}
+      {section === 'settings' && <SettingsManager />}
       {section === 'activity' && <Activity />}
     </section>
   );
@@ -140,6 +140,27 @@ function Media({ rows }: { rows: Row[] }) {
   return <Info title="Media Library">{`${n} photo(s) are uploaded with dashboard posts. Photos are added, removed and chosen as covers inside each post's editor. A shared library to reuse photos across posts is not available yet.`}</Info>;
 }
 
+function SettingsManager() {
+  const qc = useQueryClient();
+  const [value, setValue] = useState<Record<string, string>>({ address: '', phone: '', email: '', website: '', instagram: '', facebook: '', youtube: '', notice_en: '', notice_ja: '', notice_ur: '' });
+  const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false);
+  const q = useQuery({ queryKey: ['admin-site-settings'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_settings').select('value').eq('key', 'public').maybeSingle(); if (error) throw error; return data?.value ?? {}; } });
+  React.useEffect(() => { if (q.data) setValue(v => ({ ...v, ...q.data })); }, [q.data]);
+  async function save() { setBusy(true); setMsg(''); try { const { data: auth } = await supabase.auth.getUser(); const { error } = await (supabase as any).from('site_settings').upsert({ key: 'public', value, updated_at: new Date().toISOString(), updated_by: auth.user?.id ?? null }); if (error) throw error; await logActivity('update', 'settings', null, 'Updated public website settings'); await qc.invalidateQueries({ queryKey: ['admin-site-settings'] }); setMsg('Saved to the database. Public pages still need to be connected to these values before the live site changes.'); } catch (e) { setMsg(e instanceof Error ? e.message : 'Could not save settings. Apply migration 0003 first.'); } finally { setBusy(false); } }
+  const fields: [string, string][] = [['address','Address'],['phone','Phone'],['email','Email'],['website','Website URL'],['instagram','Instagram URL'],['facebook','Facebook URL'],['youtube','YouTube URL'],['notice_en','Homepage notice (English)'],['notice_ja','Homepage notice (Japanese)'],['notice_ur','Homepage notice (Urdu)']];
+  return <div className="admin-card"><h2>Website Settings</h2><p>Edit contact details, social links and homepage notices. Values are stored persistently; public page wiring is still required.</p>{q.error && <p role="alert">Could not load settings: {q.error.message}</p>}<div style={{ display: 'grid', gap: '1rem', maxWidth: 760 }}>{fields.map(([key, label]) => <label key={key}>{label}{key.startsWith('notice_') ? <Textarea rows={3} value={value[key] ?? ''} onChange={e => setValue({ ...value, [key]: e.target.value })} /> : <Input value={value[key] ?? ''} onChange={e => setValue({ ...value, [key]: e.target.value })} />}</label>)}</div>{msg && <p role="status">{msg}</p>}<Button onClick={save} disabled={busy || q.isLoading}>{busy ? 'Saving…' : 'Save settings'}</Button></div>;
+}
+
+function PrayerScheduleManager() {
+  const qc = useQueryClient();
+  const [schedule, setSchedule] = useState<Record<string, string>>({ fajr: '', sunrise: '', dhuhr: '', asr: '', maghrib: '', isha: '', jumuah: '' });
+  const [sourceNote, setSourceNote] = useState(''); const [msg, setMsg] = useState(''); const [busy, setBusy] = useState(false);
+  const q = useQuery({ queryKey: ['admin-prayer-schedule'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_prayer_schedule').select('*').eq('id', true).maybeSingle(); if (error) throw error; return data; } });
+  React.useEffect(() => { if (q.data) { setSchedule(s => ({ ...s, ...(q.data.schedule ?? {}) })); setSourceNote(q.data.source_note ?? ''); } }, [q.data]);
+  async function save() { setBusy(true); setMsg(''); try { const { data: auth } = await supabase.auth.getUser(); const { error } = await (supabase as any).from('site_prayer_schedule').upsert({ id: true, schedule, source_note: sourceNote, updated_at: new Date().toISOString(), updated_by: auth.user?.id ?? null }); if (error) throw error; await logActivity('update', 'prayer_schedule', null, 'Updated draft prayer schedule'); await qc.invalidateQueries({ queryKey: ['admin-prayer-schedule'] }); setMsg('Saved as a draft. The public prayer display remains on the official external schedule until these times are verified.'); } catch (e) { setMsg(e instanceof Error ? e.message : 'Could not save. Apply migration 0003 first.'); } finally { setBusy(false); } }
+  const names: [string, string][] = [['fajr','Fajr'],['sunrise','Sunrise'],['dhuhr','Dhuhr'],['asr','Asr'],['maghrib','Maghrib'],['isha','Isha'],['jumuah','Jumu’ah']];
+  return <div className="admin-card"><h2>Prayer Times</h2><p>Enter mosque-approved times in 24-hour format. This saves an admin-maintained draft and does not override the official live display.</p><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '1rem' }}>{names.map(([key, label]) => <label key={key}>{label}<Input type="time" value={schedule[key] ?? ''} onChange={e => setSchedule({ ...schedule, [key]: e.target.value })} /></label>)}</div><label>Source / verification note<Textarea rows={3} value={sourceNote} onChange={e => setSourceNote(e.target.value)} placeholder="Who confirmed these times and for which date/season?" /></label>{q.error && <p role="alert">Could not load schedule: {q.error.message}</p>}{msg && <p role="status">{msg}</p>}<Button onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save prayer schedule draft'}</Button></div>;
+}
 function Activity() {
   const q = useQuery({ queryKey: ['admin-activity'], queryFn: async () => {
     const { data, error } = await supabase.from('admin_activity').select('*').order('created_at', { ascending: false }).limit(100);
