@@ -24,7 +24,7 @@ export function PrayerPreview({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
  const settings=usePublicSiteSettings();
  const source = typeof settings.prayer_times_url === 'string' && /^https?:\/\//i.test(settings.prayer_times_url) ? settings.prayer_times_url : prayerTimesUrl;
- return <section className={full?'prayer-section full-prayer':'prayer-section'}><div className="content-width"><SectionHeading eyebrow={t.pending} title={t.prayer} body={t.prayerBody}/><div className={full?'prayer-embed full-embed':'prayer-embed'}><iframe src={source} title={t.iframeTitle} loading="lazy" referrerPolicy="no-referrer"/></div><div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{full ? <MapsLink href={source}>{t.openLive}</MapsLink> : <TextLink to="/prayer-times">{t.viewAll}</TextLink>}</div></div></section>;
+ return <section className={full?'prayer-section full-prayer':'prayer-section'}><div className="content-width"><Eyebrow>{t.pending}</Eyebrow><div className="section-heading"><h2>{t.prayer}</h2><p>{t.prayerBody}</p></div><div className={full?'prayer-embed full-embed':'prayer-embed'}><iframe src={source} title={t.iframeTitle} loading="lazy" referrerPolicy="no-referrer"/></div><div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{full ? <MapsLink href={source}>{t.openLive}</MapsLink> : <TextLink to="/prayer-times">{t.viewAll}</TextLink>}</div></div></section>;
 }
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
  const {t,language}=useLanguage();
