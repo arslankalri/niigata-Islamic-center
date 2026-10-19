@@ -168,12 +168,49 @@ function SettingsManager() {
 }
 
 function PrayerSourceInfo() {
+  const qc = useQueryClient();
+  const [url, setUrl] = useState(prayerTimesUrl);
+  const [msg, setMsg] = useState('');
+  const [busy, setBusy] = useState(false);
+  const q = useQuery({ queryKey: ['admin-prayer-source'], queryFn: async () => {
+    const { data, error } = await (supabase as any).from('site_settings').select('value').eq('key', 'public').maybeSingle();
+    if (error) throw error;
+    return (data?.value ?? {}) as Record<string, string>;
+  }});
+  useEffect(() => { if (q.data) setUrl(q.data.prayer_times_url || prayerTimesUrl); }, [q.data]);
+  async function save() {
+    let parsed: URL;
+    try { parsed = new URL(url.trim()); } catch { setMsg('Enter a valid full URL, including https://'); return; }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') { setMsg('The source must use http:// or https://'); return; }
+    setBusy(true); setMsg('');
+    try {
+      const { data: auth } = await supabase.auth.getUser();
+      const value = { ...(q.data ?? {}), prayer_times_url: parsed.toString() };
+      const { error } = await (supabase as any).from('site_settings').upsert({ key: 'public', value, updated_at: new Date().toISOString(), updated_by: auth.user?.id ?? null });
+      if (error) throw error;
+      await logActivity('update', 'prayer_source', null, 'Updated prayer times source URL');
+      await qc.invalidateQueries({ queryKey: ['admin-prayer-source'] });
+      await qc.invalidateQueries({ queryKey: ['public-site-settings'] });
+      await qc.invalidateQueries({ queryKey: ['admin-site-settings'] });
+      setMsg('Prayer times source saved. The public prayer-times page will use this URL.');
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : 'Could not save. Apply migration 0003 first.');
+    } finally { setBusy(false); }
+  }
   return <div className="admin-card">
-    <h2>Prayer Times — Official Source</h2>
-    <p>Prayer times are managed by the existing external schedule. This dashboard does not duplicate or override those values.</p>
-    <p><strong>Current data source:</strong> <a href={prayerTimesUrl} target="_blank" rel="noopener noreferrer">{prayerTimesUrl}</a></p>
-    <p>Use this link to open the live schedule. If the provider or URL changes, update the source in the website code and verify the public prayer-times page.</p>
-    <Button asChild><a href={prayerTimesUrl} target="_blank" rel="noopener noreferrer">Open official prayer times</a></Button>
+    <h2>Prayer Times — Source Settings</h2>
+    <p>Change the external website used for the prayer-times embed and its “Open Live Prayer Times” link. The schedule itself remains hosted by the selected provider.</p>
+    {q.error && <p role="alert">Could not load saved source: {(q.error as Error).message}. Apply migration 0003 first.</p>}
+    <label style={{ display: 'grid', gap: '.5rem', maxWidth: 760 }}>Prayer times source URL
+      <Input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com/prayer-times" />
+    </label>
+    <p><strong>Current source:</strong> <a href={q.data?.prayer_times_url || prayerTimesUrl} target="_blank" rel="noopener noreferrer">{q.data?.prayer_times_url || prayerTimesUrl}</a></p>
+    {msg && <p role={msg.startsWith('Could not') || msg.startsWith('Enter') || msg.startsWith('The source') ? 'alert' : 'status'}>{msg}</p>}
+    <div className="admin-row" style={{ marginTop: '1rem' }}>
+      <Button onClick={save} disabled={busy || q.isLoading}>{busy ? 'Saving…' : 'Save prayer source'}</Button>
+      <Button type="button" variant="outline" onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}>Preview source</Button>
+    </div>
+    <p className="admin-empty">If the new provider blocks embedding, the external link can still open it in a new tab. Only choose a trusted source.</p>
   </div>;
 }
 
