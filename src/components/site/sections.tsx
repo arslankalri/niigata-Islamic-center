@@ -1,4 +1,6 @@
 import { Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
@@ -12,6 +14,7 @@ import { useAnnouncements } from '@/lib/announcements-db';
 import { dictionaries } from '@/lib/translations';
 import { upcomingEvents } from '@/lib/events';
 import { EventCard } from './events';
+function usePublicSiteSettings() { const q = useQuery({ queryKey: ['public-site-settings'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_settings').select('value').eq('key', 'public').maybeSingle(); if (error) throw error; return (data?.value ?? {}) as Record<string, string>; }, staleTime: 60_000 }); return q.data ?? {}; }
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
 export function TextLink({to,children}: {to:PagePath;children:ReactNode}) { return <Link to={to} className="text-link">{children}<ArrowRight size={17}/></Link>; }
 export function MapsLink({href,children,secondary=false}: {href:string;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action light-action':'site-action'}><a href={href} target="_blank" rel="noopener noreferrer">{children}<ExternalLink size={16}/></a></Button>; }
@@ -37,7 +40,12 @@ export function AboutSection({full=false}: {full?:boolean}) {
 }
 export function VisitSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p></div><div><h3>{t.phoneLabel}</h3><p><PhoneLink/></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapsSearchUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
+ const settings = usePublicSiteSettings();
+ const address = settings.address || `${mosqueAddressHead} ${mosqueAddressTail}`;
+ const phone = settings.phone || phoneDisplay;
+ const phoneLink = phone ? `tel:${phone.replace(/[^+0-9]/g, '')}` : phoneHref;
+ const mapUrl = settings.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}` : mapsSearchUrl;
+ return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{address}</span></p></div><div><h3>{t.phoneLabel}</h3><p><a className="phone-link" href={phoneLink} dir="ltr">{phone}</a></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{address}</span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
