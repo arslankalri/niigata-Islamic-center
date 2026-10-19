@@ -21,12 +21,10 @@ export function MapsLink({href,children,secondary=false}: {href:string;children:
 export function Eyebrow({children}: {children:ReactNode}) { return <p className="eyebrow"><span/>{children}</p>; }
 export function Pending({children}: {children:ReactNode}) { return <span className="pending-label"><span/>{children}</span>; }
 export function PrayerPreview({full=false}: {full?:boolean}) {
- const { t } = useLanguage();
- return <section className={full?'prayer-section full-prayer':'prayer-section'}><div className="content-width"><div className="section-heading prayer-heading"><div><div className="heading-icon"><Clock3 size={19}/><h2>{t.prayer}</h2></div><p>{t.prayerBody}</p></div><Pending>{t.pending}</Pending></div>
- <div className={full?'prayer-embed full-embed':'prayer-embed'}><iframe src={prayerTimesUrl} title={t.iframeTitle} loading="lazy" referrerPolicy="no-referrer"/></div>
- <div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{full ? <MapsLink href={prayerTimesUrl}>{t.openLive}</MapsLink> : <TextLink to="/prayer-times">{t.viewAll}</TextLink>}</div>
- {full && <div className="schedule-source"><div className="qr-placeholder"><Clock3 size={30}/></div><div><h3>{t.source}</h3><p>{t.sourceBody}</p></div></div>}
- </div></section>;
+ const {t}=useLanguage();
+ const settings=usePublicSiteSettings();
+ const source = typeof settings.prayer_times_url === 'string' && /^https?:\/\//i.test(settings.prayer_times_url) ? settings.prayer_times_url : prayerTimesUrl;
+ return <section className={full?'prayer-section full-prayer':'prayer-section'}><div className="content-width"><SectionHeading eyebrow={t.pending} title={t.prayer} body={t.prayerBody}/><div className={full?'prayer-embed full-embed':'prayer-embed'}><iframe src={source} title={t.iframeTitle} loading="lazy" referrerPolicy="no-referrer"/></div><div className="schedule-note"><Info size={16}/><p>{t.scheduleNotice}</p>{full ? <MapsLink href={source}>{t.openLive}</MapsLink> : <TextLink to="/prayer-times">{t.viewAll}</TextLink>}</div></div></section>;
 }
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
  const {t,language}=useLanguage();
