@@ -140,10 +140,12 @@ function EventsInfo() {
   <label>Parking / address<Input value={draft.content.parking ?? ''} onChange={e => setDraft({ ...draft, content: { ...draft.content, parking: e.target.value } })} /></label><label>Full description<Textarea rows={8} value={draft.content.bodyText ?? ''} onChange={e => setDraft({ ...draft, content: { ...draft.content, bodyText: e.target.value } })} /></label>{msg && <p role="status">{msg}</p>}<div style={{ display: 'flex', gap: '.5rem' }}><Button onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save event'}</Button><Button variant="outline" onClick={() => setDraft(null)}>Cancel</Button></div></div>}</div>;
 }
 function Media({ rows }: { rows: Row[] }) {
-  const n = rows.reduce((a, r) => a + r.announcement_images.length, 0);
-  return <Info title="Media Library">{`${n} photo(s) are uploaded with dashboard posts. Photos are added, removed and chosen as covers inside each post's editor. A shared library to reuse photos across posts is not available yet.`}</Info>;
+  const [search, setSearch] = useState('');
+  const q = useQuery({ queryKey: ['admin-media-library'], queryFn: async () => { const { data, error } = await supabase.from('announcement_images').select('id, announcement_id, storage_path, alt, width, height, sort_order, created_at').order('created_at', { ascending: false }); if (error) throw error; return data ?? []; } });
+  const entries = (q.data ?? []).filter((i: any) => !search || i.storage_path.toLowerCase().includes(search.toLowerCase()) || JSON.stringify(i.alt ?? {}).toLowerCase().includes(search.toLowerCase()));
+  const count = rows.reduce((a, r) => a + r.announcement_images.length, 0);
+  return <div className="admin-card"><h2>Media Library</h2><p>{count} image reference(s) in the current post list. Search uploaded images and copy a storage path to reuse it in content.</p><Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by filename or alt text" />{q.isLoading && <p>Loading media…</p>}{q.error && <p role="alert">Could not load media: {q.error.message}</p>}<ul className="admin-list">{entries.map((i: any) => <li key={i.id} className="admin-item"><strong>{i.storage_path.split('/').pop()}</strong><span>{JSON.stringify(i.alt ?? {})}</span><span>{i.width ?? '?'} × {i.height ?? '?'}</span><Button size="sm" variant="outline" onClick={() => navigator.clipboard.writeText(i.storage_path)}>Copy storage path</Button></li>)}</ul>{entries.length === 0 && !q.isLoading && <p>No matching uploaded images found.</p>}</div>;
 }
-
 function SettingsManager() {
   const qc = useQueryClient();
   const [value, setValue] = useState<Record<string, string>>({ address: '', phone: '', email: '', website: '', instagram: '', facebook: '', youtube: '', notice_en: '', notice_ja: '', notice_ur: '' });
