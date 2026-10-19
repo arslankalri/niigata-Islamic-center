@@ -51,3 +51,8 @@ CREATE POLICY "Admins manage prayer schedule" ON public.site_prayer_schedule
   FOR ALL TO authenticated
   USING (public.has_role(auth.uid(), 'admin'::app_role))
   WITH CHECK (public.has_role(auth.uid(), 'admin'::app_role));
+
+-- These fields are intended for public display (contact details, links and notices).
+DROP POLICY IF EXISTS "Public can read public website settings" ON public.site_settings;
+CREATE POLICY "Public can read public website settings" ON public.site_settings
+  FOR SELECT TO anon, authenticated USING (key = 'public');
