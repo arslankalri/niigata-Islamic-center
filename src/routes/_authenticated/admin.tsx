@@ -178,11 +178,28 @@ function PrayerSourceInfo() {
 }
 
 function AnalyticsInfo() {
-  return <div className="admin-card">
-    <h2>Visitor Analytics</h2>
-    <p>Live visitor counts are not yet connected to this admin dashboard. I have not displayed guessed or fabricated numbers.</p>
-    <p>The existing hosting analytics are available in the hosting/project analytics panel. To show visitor totals, page views, top pages, referrers and devices here, the site needs a verified analytics data source or first-party event collection with admin-only read access.</p>
-    <p><strong>Implementation status:</strong> Not integrated into this dashboard yet.</p>
+  const q = useQuery({ queryKey: ['admin-site-analytics'], queryFn: async () => {
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await (supabase as any).from('site_analytics_events').select('session_id,page_path,referrer_host,source,device_type,created_at').gte('created_at', since).order('created_at', { ascending: false }).limit(10000);
+    if (error) throw error;
+    return data ?? [];
+  }, refetchInterval: 60_000 });
+  const data = q.data ?? [];
+  const unique = (key: string) => [...new Set(data.map((r: any) => r[key]).filter(Boolean))].length;
+  const tally = (key: string) => Object.entries(data.reduce((a: Record<string, number>, r: any) => { const v = r[key] || 'Unknown'; a[v] = (a[v] ?? 0) + 1; return a; }, {})).sort((a,b) => b[1] - a[1]).slice(0, 8);
+  const stat = (label: string, value: number) => <div className="admin-card"><span>{label}</span><strong>{value.toLocaleString()}</strong><small>Last 30 days</small></div>;
+  return <div>
+    <div className="admin-top"><div><h2>Visitor Analytics</h2><p>First-party page-view data from this website, excluding admin pages. Refreshes every minute.</p></div><Button variant="outline" onClick={() => q.refetch()}>Refresh</Button></div>
+    {q.error && <div className="admin-card" role="alert"><p>Could not load analytics: {(q.error as Error).message}</p><p>Apply migration <code>0004_site_analytics.sql</code> and reload the site to begin collecting data.</p></div>}
+    <div className="admin-stats">{stat('Page views', data.length)}{stat('Unique sessions (per tab)', unique('session_id'))}{stat('Pages visited', unique('page_path'))}</div>
+    {!q.isLoading && !q.error && data.length === 0 && <div className="admin-card"><p>No page views recorded yet. Apply migration 0004, then visits to public pages will begin appearing here. Historical hosting analytics are not imported.</p></div>}
+    <div className="admin-grid" style={{ marginTop: '1rem' }}>
+      <div className="admin-card"><h3>Top pages</h3><ul className="admin-list">{tally('page_path').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Traffic sources</h3><ul className="admin-list">{tally('source').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Referrer domains</h3><ul className="admin-list">{tally('referrer_host').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} visits</span></li>)}</ul></div>
+      <div className="admin-card"><h3>Devices</h3><ul className="admin-list">{tally('device_type').map(([k,v]) => <li className="admin-item" key={k}><strong>{k}</strong><span>{v} views</span></li>)}</ul></div>
+    </div>
+    <p className="admin-empty">Privacy note: this records page paths, referrer host, device category, and an anonymous session identifier for the current tab. It does not store IP addresses or raw user-agent strings. Data begins only after migration 0004 is applied.</p>
   </div>;
 }
 
