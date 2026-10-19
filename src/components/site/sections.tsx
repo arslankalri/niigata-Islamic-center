@@ -1,4 +1,6 @@
 import { Link } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Bell, CalendarDays, Clock3, MapPin, Users, Info, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
@@ -10,8 +12,9 @@ import type { ReactNode } from 'react';
 import { formatDate, paragraphs } from '@/lib/announcements';
 import { useAnnouncements } from '@/lib/announcements-db';
 import { dictionaries } from '@/lib/translations';
-import { upcomingEvents } from '@/lib/events';
+import { fetchEditableEvents, upcomingEvents } from '@/lib/events';
 import { EventCard } from './events';
+function usePublicSiteSettings() { const q = useQuery({ queryKey: ['public-site-settings'], queryFn: async () => { const { data, error } = await (supabase as any).from('site_settings').select('value').eq('key', 'public').maybeSingle(); if (error) throw error; return (data?.value ?? {}) as Record<string, string>; }, staleTime: 60_000 }); return q.data ?? {}; }
 export function ActionLink({to,children,secondary=false}: {to:PagePath;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action secondary-action':'site-action'}><Link to={to}>{children}<ArrowRight /></Link></Button>; }
 export function TextLink({to,children}: {to:PagePath;children:ReactNode}) { return <Link to={to} className="text-link">{children}<ArrowRight size={17}/></Link>; }
 export function MapsLink({href,children,secondary=false}: {href:string;children:ReactNode;secondary?:boolean}) { return <Button asChild size="lg" className={secondary?'site-action light-action':'site-action'}><a href={href} target="_blank" rel="noopener noreferrer">{children}<ExternalLink size={16}/></a></Button>; }
@@ -28,8 +31,15 @@ export function PrayerPreview({full=false}: {full?:boolean}) {
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
  const {t,language}=useLanguage();
  const announcements=useAnnouncements(language);
- const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{event&&upcomingEvents().length>0?upcomingEvents().map(e=><EventCard key={e.slug} e={e}/>):!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover?.url} alt={a.cover?.alt ?? ''} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang={a.language}>{a.category ?? dictionaries[a.language].articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang={a.language} dir={a.language==='ur'?'rtl':'ltr'}>{a.title}</h3>{a.language==='ur'&&t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
- return <section className="content-width section-space news-section">{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
+ const settings=usePublicSiteSettings();
+ const siteNotice=settings[`notice_${language}`]?.trim();
+ const savedEvents = useQuery({ queryKey: ['public-site-events'], queryFn: fetchEditableEvents, staleTime: 60_000 });
+ const staticEvents = upcomingEvents();
+ const dbEvents = savedEvents.data ?? [];
+ const eventSlugs = new Set(dbEvents.map(e => e.slug));
+ const visibleEvents = [...dbEvents, ...staticEvents.filter(e => !eventSlugs.has(e.slug))].filter(e => new Date(e.end) > new Date()).sort((a,b) => a.start.localeCompare(b.start));
+ const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{event&&visibleEvents.length>0?visibleEvents.map(e=><EventCard key={e.slug} e={e}/>):!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover?.url} alt={a.cover?.alt ?? ''} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang={a.language}>{a.category ?? dictionaries[a.language].articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang={a.language} dir={a.language==='ur'?'rtl':'ltr'}>{a.title}</h3>{a.language==='ur'&&t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
+ return <section className="content-width section-space news-section">{siteNotice && <div className="admin-public-notice" lang={language} dir={language==='ur'?'rtl':'ltr'}>{siteNotice}</div>}{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
 }
 export function AboutSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
@@ -37,11 +47,18 @@ export function AboutSection({full=false}: {full?:boolean}) {
 }
 export function VisitSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p></div><div><h3>{t.phoneLabel}</h3><p><PhoneLink/></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{mosqueAddressHead} <span className="address-tail">{mosqueAddressTail}</span></span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapsSearchUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
+ const settings = usePublicSiteSettings();
+ const address = settings.address || `${mosqueAddressHead} ${mosqueAddressTail}`;
+ const phone = settings.phone || phoneDisplay;
+ const phoneLink = phone ? `tel:${phone.replace(/[^+0-9]/g, '')}` : phoneHref;
+ const mapUrl = settings.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}` : mapsSearchUrl;
+ return <section className="visit-section"><div className="content-width visit-grid"><div><Eyebrow>{t.visitEyebrow}</Eyebrow><h2 className="display-heading">{t.visitTitle}</h2><p>{t.visitBody}</p>{!full&&<ActionLink to="/visit">{t.planVisit}</ActionLink>}{full&&<div className="visit-details"><div><h3>{t.address}</h3><p className="visit-address"><span dir="ltr">{address}</span></p></div><div><h3>{t.phoneLabel}</h3><p><a className="phone-link" href={phoneLink} dir="ltr">{phone}</a></p></div><div><h3>{t.transport}</h3><p>{t.transportBody}</p></div><div><h3>{t.guidance}</h3><p>{t.guidanceBody}</p></div></div>}</div><div className="location-panel"><MapPin size={30}/><h3>{t.map}</h3><p className="location-address"><span dir="ltr">{address}</span></p><p>{t.mapBody}</p><div className="maps-actions"><MapsLink href={mapUrl}>{t.mapsView}</MapsLink><MapsLink href={mapsDirectionsUrl} secondary>{t.mapsDirections}</MapsLink></div></div></div></section>;
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- const visit=<Button asChild size="lg" className="site-action secondary-action"><a href={facebookUrl} target="_blank" rel="noopener noreferrer">{t.facebookVisit}<ExternalLink size={16}/></a></Button>;
+ const settings=usePublicSiteSettings();
+ const facebook = settings.facebook || facebookUrl;
+ const visit=<Button asChild size="lg" className="site-action secondary-action"><a href={facebook} target="_blank" rel="noopener noreferrer">{t.facebookVisit}<ExternalLink size={16}/></a></Button>;
  return <section className={full?'facebook-section facebook-full':'facebook-section'}><div className="content-width facebook-grid"><span className="facebook-mark" aria-hidden="true">f</span><div><Eyebrow>{t.facebookEyebrow}</Eyebrow><h2>{t.facebookTitle}</h2><p>{t.facebookBody}</p>{full&&<div className="facebook-cta">{visit}</div>}{full&&<div className="facebook-source"><h3>{t.facebookSource}</h3><p>{t.facebookSourceBody}</p></div>}</div>{!full&&<div className="facebook-actions"><ActionLink to="/facebook" secondary>{t.nav[6]}</ActionLink>{visit}</div>}</div></section>;
 }
 export function PageIntro({index}: {index:number}) {

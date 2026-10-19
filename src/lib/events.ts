@@ -1,4 +1,5 @@
 import poster from '@/assets/cleanup-poster.webp.asset.json';
+import { supabase } from '@/integrations/supabase/client';
 
 type Localized = { en: string; ja: string; ur: string };
 export type SiteEvent = {
@@ -71,6 +72,35 @@ export const events: SiteEvent[] = [
     poster: { url: poster.url, alt: 'نیگاتا ایسٹ پورٹ صفائی مہم کا پوسٹر — East Port Clean-Up Campaign (Niigata), 17 October 2026', width: 1024, height: 1536 },
   },
 ];
+
+/** Published events saved from the admin dashboard, normalized to the public event model. */
+export async function fetchEditableEvents(): Promise<SiteEvent[]> {
+  const { data, error } = await (supabase as any).from('site_events').select('*').eq('status', 'published').order('start_at', { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((row: any): SiteEvent => {
+    const content = row.content ?? {};
+    const fallback = events.find(e => e.slug === row.slug) ?? events[0];
+    const bodyText = String(content.bodyText ?? '');
+    return {
+      slug: row.slug, status: 'published',
+      start: row.start_at, end: row.end_at, reception: row.reception_at ?? row.start_at,
+      title: { en: content.title?.en ?? '', ja: content.title?.ja ?? '', ur: content.title?.ur ?? '' },
+      summary: { en: content.summary?.en ?? '', ja: content.summary?.ja ?? '', ur: content.summary?.ur ?? '' },
+      location: { en: content.location?.en ?? '', ja: content.location?.ja ?? '', ur: content.location?.ur ?? '' },
+      parking: content.parking ?? '', weather: { en: content.weather?.en ?? '', ja: content.weather?.ja ?? '', ur: content.weather?.ur ?? '' },
+      body: Array.isArray(content.body) ? content.body : bodyText ? bodyText.split(/\n\s*\n/).filter(Boolean) : [],
+      poster: fallback?.poster ?? { url: poster.url, alt: content.title?.en ?? 'Event poster', width: 1024, height: 1536 },
+    };
+  });
+}
+
+export async function findEditableEvent(slug: string): Promise<SiteEvent | undefined> {
+  const { data, error } = await (supabase as any).from('site_events').select('*').eq('slug', slug).eq('status', 'published').maybeSingle();
+  if (error) throw error;
+  if (!data) return undefined;
+  const all = await fetchEditableEvents();
+  return all.find(e => e.slug === slug);
+}
 
 /** Published events that have not yet ended, soonest first. */
 export function upcomingEvents(now: Date = new Date()) {
