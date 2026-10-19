@@ -11,7 +11,7 @@ import { events } from '@/lib/events';
 import { ADMIN_SECTIONS, isSection, slugify, staticCounts, validatePost, type ContentType, type Section, type Status } from '@/lib/cms';
 
 export const Route = createFileRoute('/_authenticated/admin')({
-  validateSearch: (s: Record<string, unknown>): { section?: Section } => (isSection(s.section) ? { section: s.section } : {}),
+  validateSearch: (s: Record<string, unknown>): { section?: Section } => (isSection(s['section']) ? { section: s['section'] } : {}),
   head: () => ({ meta: [
     { title: 'Dashboard — Islamic Center Niigata' },
     { name: 'description', content: 'Manage announcements for Islamic Center Niigata.' },
