@@ -31,8 +31,10 @@ export function PrayerPreview({full=false}: {full?:boolean}) {
 export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events'}) {
  const {t,language}=useLanguage();
  const announcements=useAnnouncements(language);
+ const settings=usePublicSiteSettings();
+ const siteNotice=settings[`notice_${language}`]?.trim();
  const render=(event:boolean)=><div className="news-column"><div className="section-heading"><h2>{event?t.events:t.announcements}</h2><TextLink to={event?'/events':'/announcements'}>{event?t.allEvents:t.allAnnouncements}</TextLink></div>{event&&upcomingEvents().length>0?upcomingEvents().map(e=><EventCard key={e.slug} e={e}/>):!event&&announcements.length>0?announcements.map(a=><Link key={a.slug} to="/announcements/$slug" params={{slug:a.slug}} className="news-item news-article"><img src={a.cover?.url} alt={a.cover?.alt ?? ''} loading="lazy" width="160" height="120"/><div><p className="article-meta"><span lang={a.language}>{a.category ?? dictionaries[a.language].articleCategory}</span> · <time dateTime={a.date}>{formatDate(a.date,language)}</time></p><h3 lang={a.language} dir={a.language==='ur'?'rtl':'ltr'}>{a.title}</h3>{a.language==='ur'&&t.urduOnly&&<p>{t.urduOnly}</p>}<span className="text-link">{t.readArticle}<ArrowRight size={17}/></span></div></Link>):<article className="news-item news-empty"><div className="news-icon">{event?<CalendarDays size={25}/>:<Bell size={25}/>}</div><div><h3>{event?t.noEvents:t.noAnnouncements}</h3><p>{event?t.eventBody:t.announcementBody}</p></div></article>}</div>;
- return <section className="content-width section-space news-section">{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
+ return <section className="content-width section-space news-section">{siteNotice && <div className="admin-public-notice" lang={language} dir={language==='ur'?'rtl':'ltr'}>{siteNotice}</div>}{kind==='both'&&<Eyebrow>{t.latest}</Eyebrow>}<div className={kind==='both'?'news-grid':'news-single'}>{kind!=='events'&&render(false)}{kind!=='announcements'&&render(true)}</div></section>;
 }
 export function AboutSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
@@ -49,7 +51,9 @@ export function VisitSection({full=false}: {full?:boolean}) {
 }
 export function FacebookSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- const visit=<Button asChild size="lg" className="site-action secondary-action"><a href={facebookUrl} target="_blank" rel="noopener noreferrer">{t.facebookVisit}<ExternalLink size={16}/></a></Button>;
+ const settings=usePublicSiteSettings();
+ const facebook = settings.facebook || facebookUrl;
+ const visit=<Button asChild size="lg" className="site-action secondary-action"><a href={facebook} target="_blank" rel="noopener noreferrer">{t.facebookVisit}<ExternalLink size={16}/></a></Button>;
  return <section className={full?'facebook-section facebook-full':'facebook-section'}><div className="content-width facebook-grid"><span className="facebook-mark" aria-hidden="true">f</span><div><Eyebrow>{t.facebookEyebrow}</Eyebrow><h2>{t.facebookTitle}</h2><p>{t.facebookBody}</p>{full&&<div className="facebook-cta">{visit}</div>}{full&&<div className="facebook-source"><h3>{t.facebookSource}</h3><p>{t.facebookSourceBody}</p></div>}</div>{!full&&<div className="facebook-actions"><ActionLink to="/facebook" secondary>{t.nav[6]}</ActionLink>{visit}</div>}</div></section>;
 }
 export function PageIntro({index}: {index:number}) {
