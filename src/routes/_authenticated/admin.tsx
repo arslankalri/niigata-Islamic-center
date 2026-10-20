@@ -113,7 +113,7 @@ function Info({ title, children }: { title: string; children: React.ReactNode })
 function Overview({ rows }: { rows: Row[] }) {
   const s = staticCounts();
   const count = (t: ContentType, st?: Status) => rows.filter(r => r.content_type === t && (!st || r.status === st)).length;
-  const unimportedBuiltIns = builtIn.filter(a => !rows.some(r => r.content_type === 'article' && r.slug === a.slug && r.status === 'published'));
+  const unimportedBuiltIns = builtIn.filter(a => !rows.some(r => r.content_type === 'article' && r.slug === a.slug));
   const articleTotal = count('article') + unimportedBuiltIns.length;
   const publishedArticles = count('article', 'published') + unimportedBuiltIns.filter(a => a.status === 'published').length;
   const stats: [string, number, string][] = [
