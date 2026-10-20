@@ -275,7 +275,7 @@ function Activity() {
 
 function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
   const qc = useQueryClient();
-  const noun = type === 'article' ? 'article' : 'announcement';
+  const noun = type === 'article' ? 'news article' : 'announcement';
   const [draft, setDraft] = useState<Draft | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [msg, setMsg] = useState('');
@@ -284,7 +284,7 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
   const [filter, setFilter] = useState<'all' | Status>('all');
   const [preview, setPreview] = useState<Lang | null>(null);
 
-  const visible = rows.filter(r => r.content_type === type && (filter === 'all' || r.status === filter) &&
+  const visible = rows.filter(r => (type === 'article' ? true : r.content_type === type) && (filter === 'all' || r.status === filter) &&
     (!search || [r.slug, ...Object.values(r.title ?? {})].join(' ').toLowerCase().includes(search.toLowerCase())));
   const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ['admin-announcements'] }), qc.invalidateQueries({ queryKey: ['public-announcements'] }), qc.invalidateQueries({ queryKey: ['admin-activity'] })]);
 
@@ -414,7 +414,7 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
       {type === 'article' && (
         <div className="admin-card" style={{ marginTop: '1.5rem' }}>
           <h2>Existing website articles</h2>
-          <p>These articles are already visible on the website. Open one and save it to make it editable here. Keep the same web address to preserve its existing page link and photos.</p>
+          <p>Published website articles are shown here together with saved news posts. Open an existing article and save it to manage it here; keep its web address to preserve the page link and photos.</p>
           <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><Button size="sm" onClick={() => editBuiltIn(a)}>Make editable</Button><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
         </div>
       )}
