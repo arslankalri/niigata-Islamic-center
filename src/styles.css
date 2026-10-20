@@ -1110,3 +1110,100 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     height: 100px;
   }
 }
+
+
+/* Compact, single-row header: logo hard-left, navigation and language inline. */
+.site-header .header-inner {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+  padding: 8px 24px;
+}
+.site-header .logo-wordmark {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  width: 150px;
+  margin: 0;
+}
+.site-header .logo-wordmark img {
+  width: 150px;
+  height: 68px;
+  max-width: 150px;
+  object-fit: contain;
+  object-position: left center;
+}
+.site-header .desktop-nav {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  justify-content: flex-end;
+  gap: clamp(10px, 1.5vw, 22px);
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.site-header .desktop-nav a {
+  font-size: 11px;
+  padding: 8px 0;
+  min-height: 0;
+  white-space: nowrap;
+}
+.site-header .desktop-nav .nav-active:after {
+  inset-inline: 0;
+}
+.site-header .desktop-language {
+  grid-column: 3;
+  grid-row: 1;
+}
+@media (max-width: 950px) {
+  .site-header .header-inner {
+    grid-template-columns: 132px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 7px 18px;
+  }
+  .site-header .logo-wordmark,
+  .site-header .logo-wordmark img {
+    width: 132px;
+    max-width: 132px;
+  }
+  .site-header .logo-wordmark img { height: 60px; }
+  .site-header .desktop-nav {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 12px;
+    scrollbar-width: none;
+  }
+  .site-header .desktop-nav::-webkit-scrollbar { display: none; }
+  .site-header .desktop-nav a { font-size: 10px; }
+  .site-header .desktop-language { grid-column: 3; grid-row: 1; }
+}
+@media (max-width: 650px) {
+  .site-header .header-inner {
+    grid-template-columns: 94px minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 6px 12px;
+  }
+  .site-header .logo-wordmark,
+  .site-header .logo-wordmark img {
+    width: 94px;
+    max-width: 94px;
+  }
+  .site-header .logo-wordmark img { height: 50px; }
+  .site-header .desktop-nav {
+    gap: 10px;
+    overflow-x: auto;
+  }
+  .site-header .desktop-nav a {
+    font-size: 10px;
+    padding: 6px 0;
+  }
+  .site-header .language-control select {
+    padding: 5px 6px;
+    font-size: 10px;
+    max-width: 76px;
+  }
+}
