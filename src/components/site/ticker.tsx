@@ -1,7 +1,4 @@
 import { Link } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
-import { ArrowRight, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useLanguage } from './language';
 import { formatDate, paragraphs } from '@/lib/announcements';
 import { useAnnouncements } from '@/lib/announcements-db';
@@ -9,34 +6,22 @@ import { useAnnouncements } from '@/lib/announcements-db';
 export function AnnouncementTicker() {
   const { t, language } = useLanguage();
   const items = useAnnouncements(language);
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const multiple = items.length > 1;
-  useEffect(() => {
-    if (!multiple || paused) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const id = window.setInterval(() => setIndex(i => (i + 1) % items.length), 7000);
-    return () => window.clearInterval(id);
-  }, [multiple, paused, items.length]);
   if (items.length === 0) return null;
-  const a = items[index % items.length];
+  // Show only the newest published item, whether it is a news article or an announcement.
+  const a = items[0];
   if (!a) return null;
   const excerpt = paragraphs(a)[0];
-  const go = (d: number) => setIndex(i => (i + d + items.length) % items.length);
   return (
-    <section className="announcement-ticker" aria-label={t.tickerLabel} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
       {a.cover && <img key={a.slug} className="ticker-cover" src={a.cover.url} alt="" aria-hidden="true" width={a.cover.width} height={a.cover.height} />}
       <div className="ticker-shade" aria-hidden="true" />
       <div className="content-width ticker-inner">
         <span className="ticker-label"><Bell size={15} aria-hidden="true" />{t.tickerLabel}</span>
-        <div className="ticker-body" aria-live={multiple && !paused ? 'off' : 'polite'}>
           <time dateTime={a.date}>{formatDate(a.date, language)}</time>
           <p className="ticker-title" lang={a.language} dir={a.language === 'ur' ? 'rtl' : 'ltr'}>{a.title}</p>
           <p className="ticker-excerpt" lang={a.language} dir={a.language === 'ur' ? 'rtl' : 'ltr'}>{excerpt}</p>
         </div>
         <div className="ticker-actions">
-          {multiple && <><Button variant="ghost" size="icon" type="button" onClick={() => go(-1)} aria-label={t.prevUpdate}><ChevronLeft size={16} /></Button><Button variant="ghost" size="icon" type="button" onClick={() => go(1)} aria-label={t.nextUpdate}><ChevronRight size={16} /></Button></>}
-          <Link to="/announcements/$slug" params={{ slug: a.slug }} className="ticker-link">{t.readAnnouncement}<ArrowRight size={15} /></Link>
+          <Link to="/announcements/$slug" params={{ slug: a.slug }} className="ticker-link">{t.readArticle}<ArrowRight size={15} /></Link>
         </div>
       </div>
     </section>
