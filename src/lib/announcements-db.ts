@@ -27,8 +27,7 @@ async function fetchPublished(): Promise<{ row: Row; urls: Record<string, string
   const { data, error } = await supabase
     .from('announcements')
     .select('id, slug, publish_date, primary_language, title, body, category, author, cover_image_id, announcement_images!announcement_images_announcement_id_fkey(id, storage_path, alt, width, height, sort_order)')
-    .eq('status', 'published')
-    .eq('content_type', 'announcement');
+    .eq('status', 'published');
   if (error) throw error;
   const rows = (data ?? []) as unknown as Row[];
   const paths = rows.flatMap(r => r.announcement_images.map(i => i.storage_path));
