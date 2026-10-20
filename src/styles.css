@@ -1029,15 +1029,53 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 }
 
 
-/* Compact live Hijri date strip: deliberately small so news remains visible. */
-.hijri-date-strip { background:var(--forest); color:var(--on-forest); border-top:1px solid color-mix(in oklab,var(--gold) 22%,transparent); border-bottom:1px solid color-mix(in oklab,var(--gold) 22%,transparent); }
-.hijri-date-inner { max-width:1160px; min-height:38px; margin-inline:auto; padding:6px 40px; display:flex; align-items:center; gap:12px; font-size:11px; line-height:1.35; }
-.hijri-date-label { display:inline-flex; align-items:center; gap:6px; color:var(--gold); white-space:nowrap; font-weight:600; }
-.hijri-date-value { min-width:0; }
-.hijri-prayer-link { margin-inline-start:auto; display:inline-flex; align-items:center; gap:3px; color:var(--gold); white-space:nowrap; font-size:10px; }
-.hijri-prayer-link:hover { text-decoration:underline; }
-@media(max-width:650px) {
- .hijri-date-inner { padding-inline:24px; gap:8px; min-height:36px; font-size:10px; }
- .hijri-date-label { gap:4px; }
- .hijri-prayer-link { font-size:9px; }
+/* Site-wide live Hijri calendar strip: above navigation, separate from the official prayer timetable. */
+.hijri-date-strip {
+  background: var(--forest);
+  color: var(--on-forest);
+  border-top: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+}
+.hijri-date-inner {
+  max-width: 1240px;
+  min-height: 76px;
+  margin-inline: auto;
+  padding: 12px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.hijri-date-block, .hijri-prayer-block {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hijri-date-label, .hijri-prayer-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  white-space: nowrap;
+  font-weight: 650;
+}
+.hijri-date-value { font-size: 16px; font-weight: 600; }
+.hijri-prayer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold);
+  white-space: nowrap;
+  font-weight: 600;
+}
+.hijri-prayer-link:hover { text-decoration: underline; }
+@media (max-width: 650px) {
+  .hijri-date-inner { min-height: 68px; padding: 10px 20px; gap: 10px; flex-direction: column; align-items: stretch; }
+  .hijri-date-block, .hijri-prayer-block { justify-content: space-between; gap: 10px; }
+  .hijri-date-label, .hijri-prayer-label { gap: 6px; font-size: 12px; }
+  .hijri-date-value { font-size: 14px; text-align: end; }
+  .hijri-prayer-link { font-size: 12px; }
 }
