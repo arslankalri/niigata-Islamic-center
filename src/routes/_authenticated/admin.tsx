@@ -289,7 +289,7 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
   const refresh = () => Promise.all([qc.invalidateQueries({ queryKey: ['admin-announcements'] }), qc.invalidateQueries({ queryKey: ['public-announcements'] }), qc.invalidateQueries({ queryKey: ['admin-activity'] })]);
 
   async function editBuiltIn(a: (typeof builtIn)[number]) {
-    const bodyText = a.body.map(p => typeof p === 'string' ? p : '## ' + p.heading).join('\\n\\n');
+    const bodyText = a.body.map(p => typeof p === 'string' ? p : '## ' + p.heading).join('\n\n');
     setFiles([]);
     setMsg('This existing article will be saved as an editable database-backed article. Its current public photos will remain as fallback until you replace or upload images in the editor.');
     setPreview(null);
