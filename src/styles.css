@@ -1283,3 +1283,60 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     animation: none;
   }
 }
+
+
+/* Second motion pass: give community news and event panels a restrained, tactile response. */
+.news-item,
+.president-card,
+.event-highlight .event-poster,
+.event-page-poster,
+.article-gallery img,
+.compact-event-poster {
+  transition: transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+}
+.news-item:hover,
+.president-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--gold) 55%, var(--border));
+  box-shadow: 0 12px 28px oklch(0.23 0.04 155 / 9%);
+}
+.news-article:hover {
+  border-color: color-mix(in oklab, var(--gold) 60%, var(--border));
+}
+.news-item .news-icon {
+  transition: transform 240ms ease, background-color 240ms ease;
+}
+.news-item:hover .news-icon {
+  transform: translateY(-2px) rotate(-2deg);
+  background: color-mix(in oklab, var(--gold) 18%, var(--secondary));
+}
+.event-highlight .event-poster:hover,
+.event-page-poster:hover,
+.article-gallery img:hover {
+  transform: scale(1.015);
+  box-shadow: 0 16px 34px oklch(0.23 0.04 155 / 15%);
+}
+.compact-event-strip .compact-event-poster:hover {
+  transform: scale(1.035);
+}
+@media (prefers-reduced-motion: reduce) {
+  .news-item,
+  .president-card,
+  .news-item .news-icon,
+  .event-highlight .event-poster,
+  .event-page-poster,
+  .article-gallery img,
+  .compact-event-poster {
+    transition: none;
+  }
+  .news-item:hover,
+  .president-card:hover,
+  .event-highlight .event-poster:hover,
+  .event-page-poster:hover,
+  .article-gallery img:hover,
+  .compact-event-strip .compact-event-poster:hover,
+  .news-item:hover .news-icon {
+    transform: none;
+    box-shadow: none;
+  }
+}
