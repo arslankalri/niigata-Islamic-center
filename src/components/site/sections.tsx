@@ -41,7 +41,7 @@ export function NewsSection({kind='both'}: {kind?:'both'|'announcements'|'events
 }
 export function AboutSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
- return <section className="about-section"><div className="content-width about-grid"><div className="arch-photo"><img src={day.url} alt={t.photoDay} loading="lazy" width="960" height="960"/><span className="arch-border"/></div><div className="about-copy"><Eyebrow>{t.aboutEyebrow}</Eyebrow><h2 className="display-heading preserve-lines">{t.aboutTitle}</h2><p>{t.aboutBody}</p><div className="ornament-divider"><span/>◇<span/></div>{!full?<><PresidentCard compact/><ActionLink to="/about">{t.more}</ActionLink></>:<div className="about-details"><h3>{t.history}</h3><p>{t.historyBody}</p><h3>{t.presidentHeading}</h3><PresidentCard/><h3>{t.leadership}</h3><p>{t.leadershipBody}</p></div>}</div></div></section>;
+ return <section className="about-section"><div className="content-width about-grid"><div className="arch-photo"><img src={day.url} alt={t.photoDay} loading="lazy" width="960" height="960"/></div><div className="about-copy"><Eyebrow>{t.aboutEyebrow}</Eyebrow><h2 className="display-heading preserve-lines">{t.aboutTitle}</h2><p>{t.aboutBody}</p><div className="ornament-divider"><span/>◇<span/></div>{!full?<><PresidentCard compact/><ActionLink to="/about">{t.more}</ActionLink></>:<div className="about-details"><h3>{t.history}</h3><p>{t.historyBody}</p><h3>{t.presidentHeading}</h3><PresidentCard/><h3>{t.leadership}</h3><p>{t.leadershipBody}</p></div>}</div></div></section>;
 }
 export function VisitSection({full=false}: {full?:boolean}) {
  const {t}=useLanguage();
