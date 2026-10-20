@@ -912,3 +912,7 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Let the fixed backdrop remain visible across the full homepage scroll. */
+.home-page { overflow: visible; }
+.home-page::before { inset: 0; }
