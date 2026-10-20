@@ -25,10 +25,10 @@ export function slugify(s: string) {
   return s.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
-export function validatePost(p: { slug: string; title: Partial<Record<string, string>>; primary_language: string }): string | null {
+export function validatePost(p: { slug: string; title: Partial<Record<string, string>>; primary_language: string }, allowBuiltInSlug = false): string | null {
   const slug = slugify(p.slug);
   if (!slug) return 'Please add a web address (for example: eid-gathering-2026).';
-  if (builtInSlugs.includes(slug)) return 'This web address is already used by a built-in article. Please choose another.';
+  if (!allowBuiltInSlug && builtInSlugs.includes(slug)) return 'This web address is already used by an existing website article. Open that article from News & Articles to edit it.';
   if (!p.title[p.primary_language]?.trim()) return 'Please add a title in the main language.';
   return null;
 }
