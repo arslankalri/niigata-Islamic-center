@@ -79,10 +79,6 @@ export function HijriDateStrip() {
             {isPending ? copy.loading : isError || !hijriLabel ? copy.unavailable : hijriLabel}
           </span>
         </div>
-        <div className="hijri-prayer-block">
-          <span className="hijri-prayer-label"><Clock3 size={17} aria-hidden="true" />{copy.prayer}</span>
-          <Link to="/prayer-times" className="hijri-prayer-link">{copy.openPrayer}<ChevronRight size={15} aria-hidden="true" /></Link>
-        </div>
       </div>
     </section>
   );
