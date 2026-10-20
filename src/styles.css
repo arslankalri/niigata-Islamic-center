@@ -596,3 +596,63 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
   }
 }
 
+/* Additional low-risk polish for long text, navigation and touch targets. */
+.site-footer a,
+.desktop-nav a,
+.mobile-nav a,
+.text-link,
+.ticker-link {
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 650px) {
+  .hero-content h1 {
+    font-size: clamp(42px, 11vw, 57px);
+  }
+
+  .hero-content h1 span {
+    font-size: clamp(50px, 12.5vw, 67px);
+  }
+
+  .display-heading {
+    font-size: clamp(30px, 8vw, 38px);
+    overflow-wrap: anywhere;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(21px, 5.8vw, 27px);
+    line-height: 1.3;
+  }
+
+  .location-panel {
+    padding: 24px 18px;
+  }
+
+  .location-panel .maps-actions {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .location-panel .maps-actions a,
+  .location-panel .maps-actions button {
+    max-width: 100%;
+  }
+
+  .news-item,
+  .admin-card,
+  .admin-lang {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (min-width: 651px) and (max-width: 950px) {
+  .hero-content h1 {
+    font-size: clamp(54px, 7.5vw, 72px);
+  }
+
+  .about-grid,
+  .visit-grid {
+    gap: clamp(28px, 5vw, 55px);
+  }
+}
+
