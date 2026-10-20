@@ -1204,3 +1204,82 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     max-width: 76px;
   }
 }
+
+
+/* Gentle site motion: cinematic hero entrance, restrained hover feedback, and accessible motion preferences. */
+@keyframes ic-hero-image-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.055); }
+}
+@keyframes ic-hero-content-enter {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes ic-hero-detail-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.home-hero .hero-image {
+  animation: ic-hero-image-drift 22s ease-in-out alternate infinite;
+  will-change: transform;
+}
+.home-hero .hero-content > * {
+  animation: ic-hero-content-enter 800ms cubic-bezier(.2,.7,.2,1) both;
+}
+.home-hero .hero-content > *:nth-child(1) { animation-delay: 100ms; }
+.home-hero .hero-content > *:nth-child(2) { animation-delay: 220ms; }
+.home-hero .hero-content > *:nth-child(3) { animation-delay: 340ms; }
+.home-hero .hero-content > *:nth-child(4) { animation-delay: 460ms; }
+.home-hero .hero-content > *:nth-child(5) { animation-delay: 580ms; }
+.home-hero .hero-content > *:nth-child(6) { animation-delay: 700ms; }
+.home-hero .hero-bottom {
+  animation: ic-hero-detail-enter 1s ease-out 700ms both;
+}
+.site-action,
+.desktop-nav a,
+.mobile-nav a,
+.text-link,
+.prayer-item,
+.site-footer a {
+  transition: color 220ms ease, background-color 220ms ease, border-color 220ms ease,
+    box-shadow 220ms ease, transform 220ms ease, opacity 220ms ease;
+}
+.site-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px oklch(0.13 0.02 155 / 18%);
+}
+.prayer-item:hover {
+  transform: translateY(-2px);
+}
+.desktop-nav a:not(.nav-active)::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms ease;
+}
+.desktop-nav a:not(.nav-active):hover::after {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .home-hero .hero-image {
+    animation: none;
+    transform: none;
+  }
+  .home-hero .hero-content > *,
+  .home-hero .hero-bottom {
+    animation: none;
+  }
+}
