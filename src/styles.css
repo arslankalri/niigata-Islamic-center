@@ -916,3 +916,92 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 /* Let the fixed backdrop remain visible across the full homepage scroll. */
 .home-page { overflow: visible; }
 .home-page::before { inset: 0; }
+
+
+/* Prayer times are the homepage's primary utility: strengthen hierarchy without touching the official source iframe. */
+.home-page .prayer-section {
+  position: relative;
+  padding-top: clamp(38px, 5vw, 58px);
+  padding-bottom: clamp(38px, 5vw, 58px);
+  border-bottom: 1px solid oklch(0.94 0.015 88 / 26%);
+}
+.home-page .prayer-section > .content-width > .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.home-page .prayer-section .section-heading {
+  max-width: 760px;
+  margin-bottom: 4px;
+}
+.home-page .prayer-section .section-heading h2 {
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.home-page .prayer-section .section-heading p {
+  max-width: 58ch;
+  margin-top: 10px;
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.7;
+}
+.home-page .prayer-section .prayer-embed {
+  margin-top: 22px;
+  padding: clamp(6px, 1vw, 12px);
+  border: 1px solid oklch(0.82 0.11 85 / 58%);
+  border-radius: 16px;
+  background: oklch(0.10 0.025 160 / 82%);
+  box-shadow: 0 22px 64px oklch(0.04 0.02 160 / 38%), inset 0 1px 0 oklch(0.98 0.01 88 / 10%);
+}
+.home-page .prayer-section .prayer-embed iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  border-radius: 9px;
+}
+.home-page .prayer-section .schedule-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.home-page .prayer-section .schedule-note > svg {
+  flex: none;
+  color: var(--gold);
+}
+.home-page .prayer-section .schedule-note p {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.65;
+}
+.home-page .prayer-section .schedule-note .text-link {
+  flex: none;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 14px;
+  border: 1px solid oklch(0.82 0.11 85 / 48%);
+  border-radius: 7px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.home-page .prayer-section .schedule-note .text-link:hover {
+  background: oklch(0.94 0.015 88 / 9%);
+}
+@media (max-width: 640px) {
+  .home-page .prayer-section { padding-top: 30px; padding-bottom: 32px; }
+  .home-page .prayer-section .section-heading h2 { font-size: clamp(28px, 8vw, 36px); }
+  .home-page .prayer-section .prayer-embed { margin-top: 18px; padding: 4px; border-radius: 10px; }
+  .home-page .prayer-section .prayer-embed iframe { border-radius: 6px; }
+  .home-page .prayer-section .schedule-note { align-items: flex-start; flex-wrap: wrap; gap: 8px 10px; }
+  .home-page .prayer-section .schedule-note p { flex-basis: calc(100% - 30px); }
+  .home-page .prayer-section .schedule-note .text-link { margin-inline-start: 26px; white-space: normal; }
+}
