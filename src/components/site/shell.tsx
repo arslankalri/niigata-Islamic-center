@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { paths } from '@/lib/translations';
+import logoUrl from '@/assets/Niigata Islamic Center logo.png';
 import { PhoneLink } from './sections';
 import { LanguageSelector, useLanguage } from './language';
 import { HijriDateStrip } from './hijri-date-strip';
@@ -14,7 +15,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
   <HijriDateStrip />
   <header className="site-header">
    <div className="header-inner">
-    <Link to="/" className="wordmark logo-wordmark" aria-label="Islamic Center Niigata"><img src="/src/assets/Niigata%20Islamic%20Center%20logo.png" alt="Islamic Center Niigata logo" /></Link>
+    <Link to="/" className="wordmark logo-wordmark" aria-label="Islamic Center Niigata"><img src={logoUrl} alt="Islamic Center Niigata logo" /></Link>
     <nav className="desktop-nav" aria-label={t.explore}>{paths.map((path,i) => <Link key={path} to={path} activeOptions={{exact:true}} activeProps={{className:'nav-active'}}>{t.nav[i]}</Link>)}</nav>
     <div className="desktop-language"><LanguageSelector /></div>
    </div>
