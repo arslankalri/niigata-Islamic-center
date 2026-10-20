@@ -1027,3 +1027,17 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     border-radius: 48% 48% 3px 3px;
   }
 }
+
+
+/* Compact live Hijri date strip: deliberately small so news remains visible. */
+.hijri-date-strip { background:var(--forest); color:var(--on-forest); border-top:1px solid color-mix(in oklab,var(--gold) 22%,transparent); border-bottom:1px solid color-mix(in oklab,var(--gold) 22%,transparent); }
+.hijri-date-inner { max-width:1160px; min-height:38px; margin-inline:auto; padding:6px 40px; display:flex; align-items:center; gap:12px; font-size:11px; line-height:1.35; }
+.hijri-date-label { display:inline-flex; align-items:center; gap:6px; color:var(--gold); white-space:nowrap; font-weight:600; }
+.hijri-date-value { min-width:0; }
+.hijri-prayer-link { margin-inline-start:auto; display:inline-flex; align-items:center; gap:3px; color:var(--gold); white-space:nowrap; font-size:10px; }
+.hijri-prayer-link:hover { text-decoration:underline; }
+@media(max-width:650px) {
+ .hijri-date-inner { padding-inline:24px; gap:8px; min-height:36px; font-size:10px; }
+ .hijri-date-label { gap:4px; }
+ .hijri-prayer-link { font-size:9px; }
+}
