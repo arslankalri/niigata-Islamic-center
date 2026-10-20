@@ -1340,3 +1340,23 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
     box-shadow: none;
   }
 }
+
+
+/* Scroll reveal is enabled only when JavaScript and IntersectionObserver are available. */
+#main.scroll-reveal-ready .scroll-reveal-item {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 650ms cubic-bezier(.2,.7,.2,1), transform 650ms cubic-bezier(.2,.7,.2,1);
+}
+#main.scroll-reveal-ready .scroll-reveal-item.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  #main.scroll-reveal-ready .scroll-reveal-item,
+  #main.scroll-reveal-ready .scroll-reveal-item.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
