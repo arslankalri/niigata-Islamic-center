@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { paths } from '@/lib/translations';
 import logoUrl from '@/assets/Niigata Islamic Center logo.png';
@@ -9,6 +10,52 @@ import { HijriDateStrip } from './hijri-date-strip';
 
 export function SiteShell({ children }: { children: ReactNode }) {
  const { t, language } = useLanguage();
+
+ useEffect(() => {
+  const main = document.querySelector<HTMLElement>('#main');
+  if (!main || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+   entries.forEach(entry => {
+    if (entry.isIntersecting) {
+     entry.target.classList.add('is-revealed');
+     observer.unobserve(entry.target);
+    }
+   });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  const revealTargets = [
+   '.section-space',
+   '.about-section',
+   '.visit-section',
+   '.facebook-section',
+   '.event-highlight',
+   '.news-item',
+   '.compact-event-strip',
+  ].join(',');
+
+  const scanForRevealTargets = () => {
+   main.querySelectorAll<HTMLElement>(revealTargets).forEach(element => {
+    if (element.classList.contains('scroll-reveal-item')) return;
+    element.classList.add('scroll-reveal-item');
+    revealObserver.observe(element);
+   });
+  };
+
+  scanForRevealTargets();
+  main.classList.add('scroll-reveal-ready');
+  const mutationObserver = new MutationObserver(scanForRevealTargets);
+  mutationObserver.observe(main, { childList: true, subtree: true });
+
+  return () => {
+   mutationObserver.disconnect();
+   revealObserver.disconnect();
+   main.classList.remove('scroll-reveal-ready');
+   main.querySelectorAll('.scroll-reveal-item').forEach(element => {
+    element.classList.remove('scroll-reveal-item', 'is-revealed');
+   });
+  };
+ }, []);
 
  return <div className="site-shell" data-language={language} dir={language === 'ur' ? 'rtl' : 'ltr'}>
   <a className="skip-link" href="#main">{t.skip}</a>
