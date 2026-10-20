@@ -6,7 +6,7 @@ export type Status = 'draft' | 'published' | 'archived';
 
 export const ADMIN_SECTIONS = [
   { key: 'overview', label: 'Dashboard Overview' },
-  { key: 'announcements', label: 'Announcements' },
+  { key: 'announcements', label: 'Notices' },
   { key: 'articles', label: 'News & Articles' },
   { key: 'events', label: 'Events' },
   { key: 'prayer', label: 'Prayer Times' },
