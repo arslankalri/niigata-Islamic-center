@@ -113,11 +113,13 @@ function Info({ title, children }: { title: string; children: React.ReactNode })
 function Overview({ rows }: { rows: Row[] }) {
   const s = staticCounts();
   const count = (t: ContentType, st?: Status) => rows.filter(r => r.content_type === t && (!st || r.status === st)).length;
+  const unimportedBuiltIns = builtIn.filter(a => !rows.some(r => r.content_type === 'article' && r.slug === a.slug && r.status === 'published'));
+  const articleTotal = count('article') + unimportedBuiltIns.length;
+  const publishedArticles = count('article', 'published') + unimportedBuiltIns.filter(a => a.status === 'published').length;
   const stats: [string, number, string][] = [
-    ['Dashboard announcements', count('announcement'), `${count('announcement', 'published')} published`],
-    ['Dashboard articles', count('article'), `${count('article', 'published')} published`],
-    ['Built-in articles', s.builtInPosts, 'part of the website code, always shown'],
-    ['Events', s.events, `${s.upcomingEvents} upcoming · built-in`],
+    ['Announcements', count('announcement'), `${count('announcement', 'published')} published`],
+    ['News & Articles', articleTotal, `${publishedArticles} published`],
+    ['Events', s.events, `${s.upcomingEvents} upcoming`],
   ];
   return (
     <div className="admin-stats">
@@ -321,7 +323,8 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
 
   async function save(status: Status) {
     if (!draft) return;
-    const err = validatePost(draft);
+    const importingExistingArticle = type === 'article' && !draft.id && builtIn.some(a => a.slug === slugify(draft.slug));
+    const err = validatePost(draft, importingExistingArticle);
     if (err) return setMsg(err);
     const d = { ...draft, status, slug: slugify(draft.slug) };
     setBusy(true); setMsg('');
@@ -410,9 +413,9 @@ function PostManager({ type, rows }: { type: ContentType; rows: Row[] }) {
       </ul>
       {type === 'article' && (
         <div className="admin-card" style={{ marginTop: '1.5rem' }}>
-          <h2>Existing published articles (code-managed)</h2>
-          <p>These existing articles can be opened in the editor and saved into the database. Saving with the same web address makes the editable version take precedence while preserving existing public images as a fallback.</p>
-          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><Button size="sm" onClick={() => editBuiltIn(a)}>Edit in CMS</Button><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
+          <h2>Existing website articles</h2>
+          <p>These articles are already visible on the website. Open one and save it to make it editable here. Keep the same web address to preserve its existing page link and photos.</p>
+          <ul className="admin-list">{builtIn.map(a => <li key={a.slug} className="admin-item"><span className="admin-badge live">{a.status}</span><strong dir="auto">{a.title}</strong><span>{a.date}</span><Button size="sm" onClick={() => editBuiltIn(a)}>Make editable</Button><details><summary>Read full article</summary><div dir={a.language === 'ur' ? 'rtl' : 'ltr'} lang={a.language}><h3>{a.title}</h3>{a.body.map((p, i) => typeof p === 'string' ? <p key={i}>{p}</p> : <h4 key={i}>{p.heading}</h4>)}</div></details></li>)}</ul>
         </div>
       )}
     </div>
