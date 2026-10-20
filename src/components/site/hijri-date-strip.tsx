@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { MoonStar, Clock3, ChevronRight } from 'lucide-react';
+import { MoonStar } from 'lucide-react';
 import { useLanguage } from './language';
 
 const TIME_ZONE = 'Asia/Tokyo';
 
 const labels = {
-  en: { hijri: 'Hijri calendar', prayer: 'Official prayer schedule', openPrayer: 'View prayer times', loading: 'Updating today’s date…', unavailable: 'Date temporarily unavailable' },
-  ja: { hijri: 'ヒジュラ暦', prayer: '公式礼拝時間', openPrayer: '礼拝時間を見る', loading: '本日の日付を更新中…', unavailable: '日付を一時的に取得できません' },
-  ur: { hijri: 'ہجری کیلنڈر', prayer: 'سرکاری اوقاتِ نماز', openPrayer: 'اوقاتِ نماز دیکھیں', loading: 'آج کی تاریخ اپ ڈیٹ ہو رہی ہے…', unavailable: 'تاریخ عارضی طور پر دستیاب نہیں' },
+  en: { hijri: 'Hijri calendar', loading: 'Updating today’s date…', unavailable: 'Date temporarily unavailable' },
+  ja: { hijri: 'ヒジュラ暦', loading: '本日の日付を更新中…', unavailable: '日付を一時的に取得できません' },
+  ur: { hijri: 'ہجری کیلنڈر', loading: 'آج کی تاریخ اپ ڈیٹ ہو رہی ہے…', unavailable: 'تاریخ عارضی طور پر دستیاب نہیں' },
 } as const;
 
 function getJapanDate() {
@@ -75,7 +74,7 @@ export function HijriDateStrip() {
     <section className="hijri-date-strip" aria-label={copy.hijri} dir={language === 'ur' ? 'rtl' : 'ltr'}>
       <div className="hijri-date-inner">
         <div className="hijri-date-block">
-          <span className="hijri-date-label"><MoonStar size={18} aria-hidden="true" />{copy.hijri}</span>
+          <span className="hijri-date-label"><MoonStar size={15} aria-hidden="true" />{copy.hijri}</span>
           <span className="hijri-date-value" aria-live="polite">
             {isPending ? copy.loading : isError || !hijriLabel ? copy.unavailable : hijriLabel}
           </span>
