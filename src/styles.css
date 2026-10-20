@@ -1082,31 +1082,31 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 }
 
 
-/* Header logo: preserve the supplied green-and-gold artwork across screen sizes. */
-.logo-wordmark {
+/* Header logo: make the full supplied artwork prominent above navigation. */
+.header-inner .logo-wordmark {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
   min-width: 0;
 }
-.logo-wordmark img {
+.header-inner .logo-wordmark img {
   display: block;
   width: 100%;
-  max-width: 190px;
-  height: 76px;
+  max-width: 230px;
+  height: 100px;
   object-fit: contain;
   object-position: left center;
 }
 @media (max-width: 950px) {
-  .logo-wordmark img {
-    max-width: 160px;
-    height: 66px;
+  .header-inner .logo-wordmark img {
+    max-width: 210px;
+    height: 92px;
   }
 }
 @media (max-width: 650px) {
-  .logo-wordmark img {
-    max-width: 142px;
-    height: 58px;
+  .header-inner .logo-wordmark img {
+    max-width: 220px;
+    height: 100px;
   }
 }
