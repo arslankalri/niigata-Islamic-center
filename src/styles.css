@@ -656,3 +656,87 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
   }
 }
 
+/* Automatic responsive layout safeguards across phone, tablet and desktop. */
+.site-shell,
+.site-shell main,
+.site-shell section {
+  min-width: 0;
+}
+
+.site-shell img,
+.site-shell iframe,
+.site-shell video {
+  max-width: 100%;
+}
+
+@media (max-width: 650px) {
+  .header-inner {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .desktop-nav {
+    max-width: 100%;
+    overscroll-behavior-inline: contain;
+  }
+
+  .hero-image {
+    object-position: center;
+  }
+
+  .site-action,
+  .compact-event-link,
+  .ticker-actions button,
+  .maps-actions a,
+  .maps-actions button {
+    min-height: 44px;
+  }
+
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .prayer-embed,
+  .prayer-embed iframe {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 651px) and (max-width: 950px) {
+  .content-width {
+    padding-inline: clamp(24px, 4vw, 32px);
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 951px) {
+  .desktop-nav {
+    flex-wrap: nowrap;
+  }
+
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1.35fr 1fr;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .desktop-nav a,
+  .mobile-nav a,
+  .site-action,
+  .text-link,
+  .ticker-link {
+    touch-action: manipulation;
+  }
+}
+
