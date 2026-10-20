@@ -531,3 +531,68 @@ h1,h2,h3 { line-height:1.25; letter-spacing:0; }
 .admin-item strong { flex: 1; }
 .admin-select { height: 2.25rem; border: 1px solid var(--input); border-radius: .4rem; padding: 0 .5rem; background: var(--background); }
 .admin-preview { border: 1px dashed var(--border); border-radius: .6rem; padding: 1rem; background: var(--background); display: grid; gap: .6rem; }
+
+/* Safe usability polish: preserve existing components and behavior. */
+:where(a, button, input, select, textarea, iframe):focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+
+:where(button, a, [role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 640px) {
+  .content-width {
+    width: min(100% - 32px, 1120px);
+  }
+
+  .section-space {
+    padding-block: clamp(36px, 8vw, 56px);
+  }
+
+  .section-heading {
+    gap: 10px;
+  }
+
+  .section-heading h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .maps-actions {
+    flex-wrap: wrap;
+  }
+
+  .maps-actions > * {
+    min-height: 44px;
+  }
+
+  .visit-grid,
+  .about-grid,
+  .facebook-grid {
+    min-width: 0;
+  }
+
+  .hero-content,
+  .news-column,
+  .about-copy,
+  .visit-grid > div {
+    min-width: 0;
+  }
+
+  .prayer-embed iframe {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
