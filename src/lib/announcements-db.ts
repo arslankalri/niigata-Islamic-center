@@ -65,7 +65,7 @@ function toAnnouncement({ row, urls }: { row: Row; urls: Record<string, string> 
 
 const query = { queryKey: ['public-announcements'], queryFn: fetchPublished, staleTime: 5 * 60 * 1000 };
 
-/** Built-in articles plus ones published from the dashboard, newest first. */
+/** Published articles and announcements from Supabase, newest first. */
 export function useAnnouncements(language: Lang): Announcement[] {
   const { data } = useQuery(query);
   const fromDb = (data ?? []).map(d => toAnnouncement(d, language));
