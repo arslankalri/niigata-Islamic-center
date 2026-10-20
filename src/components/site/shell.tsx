@@ -4,12 +4,14 @@ import { ArrowUpRight } from 'lucide-react';
 import { paths } from '@/lib/translations';
 import { PhoneLink } from './sections';
 import { LanguageSelector, useLanguage } from './language';
+import { HijriDateStrip } from './hijri-date-strip';
 
 export function SiteShell({ children }: { children: ReactNode }) {
  const { t, language } = useLanguage();
 
  return <div className="site-shell" data-language={language} dir={language === 'ur' ? 'rtl' : 'ltr'}>
   <a className="skip-link" href="#main">{t.skip}</a>
+  <HijriDateStrip />
   <header className="site-header">
    <div className="header-inner">
     <Link to="/" className="wordmark" aria-label="Islamic Center Niigata"><span>Islamic Center</span><span>Niigata<span className="wordmark-rule" /></span></Link>
